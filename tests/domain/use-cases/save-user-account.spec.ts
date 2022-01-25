@@ -1,15 +1,37 @@
 import { mock } from 'jest-mock-extended'
 
-class SaveUserAccount {
-  constructor (private readonly saveUserAccountRepository: SaveUserAccountRepository) {}
-  async save (userAccount: any): Promise<any> {
-    const user = await this.saveUserAccountRepository.saveUserAccount(userAccount)
-    return user
-  }
+type Setup = (saveUserAccountRepository: SaveUserAccountRepository) => AddUserAccount
+type Input = UserAddAccountModel
+type Output = UserAccountModel
+type AddUserAccount = (input: Input) => Promise<Output>
+
+const addUserAccount: Setup = (saveUserAccountRepository) => async (addAccountParams) => {
+  const user = await saveUserAccountRepository.saveUserAccount(addAccountParams)
+  return user
 }
 
+type UserAddAccountModel = {
+  name: string
+  email: string
+  birthDate: string
+  phone: string
+  password: string
+  cpf: string
+  rg: string
+}
+
+type UserAccountModel = {
+  id: string
+  name: string
+  email: string
+  birthDate: string
+  phone: string
+  password: string
+  cpf: string
+  rg: string
+}
 interface SaveUserAccountRepository {
-  saveUserAccount: (userAccount: any) => Promise<any>
+  saveUserAccount: (userAccount: UserAddAccountModel) => Promise<UserAccountModel>
 }
 
 describe('SaveUserAccount UseCase', () => {
@@ -22,11 +44,12 @@ describe('SaveUserAccount UseCase', () => {
       phone: 'any_phone',
       password: 'any_password',
       cpf: 'any_cpf',
-      rg: 'any_rg'
+      rg: 'any_rg',
+      id: 'any_id'
     }
-    const sut = new SaveUserAccount(saveUserAccountRepositorySpy)
+    const sut = addUserAccount(saveUserAccountRepositorySpy)
 
-    await sut.save(userAccount)
+    await sut(userAccount)
 
     expect(saveUserAccountRepositorySpy.saveUserAccount).toHaveBeenCalledWith(userAccount)
     expect(saveUserAccountRepositorySpy.saveUserAccount).toHaveBeenCalledTimes(1)
@@ -34,7 +57,7 @@ describe('SaveUserAccount UseCase', () => {
 
   it('Should return an user account when succeds', async () => {
     const saveUserAccountRepositorySpy = mock<SaveUserAccountRepository>()
-    const sut = new SaveUserAccount(saveUserAccountRepositorySpy)
+    const sut = addUserAccount(saveUserAccountRepositorySpy)
     const userAccount = {
       name: 'any_name',
       email: 'any_email',
@@ -42,11 +65,13 @@ describe('SaveUserAccount UseCase', () => {
       phone: 'any_phone',
       password: 'any_password',
       cpf: 'any_cpf',
-      rg: 'any_rg'
+      rg: 'any_rg',
+      id: 'any_id'
     }
+
     saveUserAccountRepositorySpy.saveUserAccount.mockResolvedValueOnce(userAccount)
 
-    const user = await sut.save(userAccount)
+    const user = await sut(userAccount)
 
     expect(user).toBe(userAccount)
   })
