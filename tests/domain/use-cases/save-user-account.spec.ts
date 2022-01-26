@@ -49,4 +49,14 @@ describe('SaveUserAccount UseCase', () => {
 
     expect(user).toBe(mockUserAccount)
   })
+
+  it('Should rethrow if SaveUserAccountRepository throws', async () => {
+    saveUserAccountRepositorySpy.saveUserAccount.mockImplementationOnce(() => {
+      throw new Error()
+    })
+
+    const promise = sut(mockUserAddAccount)
+
+    await expect(promise).rejects.toThrow()
+  })
 })
