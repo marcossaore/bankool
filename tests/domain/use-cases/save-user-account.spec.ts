@@ -1,38 +1,6 @@
 import { mock } from 'jest-mock-extended'
-
-type Setup = (saveUserAccountRepository: SaveUserAccountRepository) => AddUserAccount
-type Input = UserAddAccountModel
-type Output = UserAccountModel
-type AddUserAccount = (input: Input) => Promise<Output>
-
-const addUserAccount: Setup = (saveUserAccountRepository) => async (addAccountParams) => {
-  const user = await saveUserAccountRepository.saveUserAccount(addAccountParams)
-  return user
-}
-
-type UserAddAccountModel = {
-  name: string
-  email: string
-  birthDate: string
-  phone: string
-  password: string
-  cpf: string
-  rg: string
-}
-
-type UserAccountModel = {
-  id: string
-  name: string
-  email: string
-  birthDate: string
-  phone: string
-  password: string
-  cpf: string
-  rg: string
-}
-interface SaveUserAccountRepository {
-  saveUserAccount: (userAccount: UserAddAccountModel) => Promise<UserAccountModel>
-}
+import { SaveUserAccountRepository } from '@/domain/contracts/repos'
+import { addUserAccount } from '@/domain/use-cases/add-user-account'
 
 describe('SaveUserAccount UseCase', () => {
   it('Should call SaveUserAccountRepository with correct input', async () => {
