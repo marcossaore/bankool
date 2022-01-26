@@ -1,11 +1,17 @@
 import { SaveUserAccountRepository } from '@/domain/contracts/repos'
+import { TokenGenerator } from '../contracts/gateways/token'
+import { AccessToken } from '../entities/access-token'
 
-type Setup = (saveUserAccountRepository: SaveUserAccountRepository) => AddUserAccount
+type Setup = (saveUserAccountRepository: SaveUserAccountRepository, token: TokenGenerator) => AddUserAccount
 type Input = SaveUserAccountRepository.Input
-type Output = SaveUserAccountRepository.Output
+type Output = { accessToken: string }
 export type AddUserAccount = (input: Input) => Promise<Output>
 
-export const addUserAccount: Setup = (saveUserAccountRepository) => async (addAccountParams) => {
+export const addUserAccount: Setup = (saveUserAccountRepository, token) => async (addAccountParams) => {
   const user = await saveUserAccountRepository.saveUserAccount(addAccountParams)
-  return user
+  const accessToken = await token.generate({
+    key: user.id,
+    expirationInMs: AccessToken.expirationInMs
+  })
+  return { accessToken }
 }
