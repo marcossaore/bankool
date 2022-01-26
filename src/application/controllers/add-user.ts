@@ -14,8 +14,10 @@ export class AddUser extends Controller {
 
   async perform (httpRequest: AddUser.HttpRequest): Promise<HttpResponse> {
     const user = await this.addUserAccount(httpRequest)
-    await this.tokenGenerator.generate({ key: user.id, expirationInMs: AccessToken.expirationInMs })
-    return ok({})
+    const accessToken = await this.tokenGenerator.generate({ key: user.id, expirationInMs: AccessToken.expirationInMs })
+    return ok({
+      accessToken
+    })
   }
 
   override buildValidators (httpRequest: AddUser.HttpRequest): Validator[] {

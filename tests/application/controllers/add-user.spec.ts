@@ -64,4 +64,12 @@ describe('AddUser Controller', () => {
     await sut.handle(addUserRequest)
     expect(tokenGenerator.generate).toBeCalledWith({ key: userModel.id, expirationInMs: AccessToken.expirationInMs })
   })
+
+  it('Should return 200 with an access token on success', async () => {
+    const response = await sut.handle(addUserRequest)
+    expect(response).toEqual({
+      statusCode: 200,
+      data: { accessToken: 'any_access_token' }
+    })
+  })
 })
