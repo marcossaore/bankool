@@ -1,11 +1,16 @@
 import { AddUser, Controller } from '@/application/controllers'
 import { RequiredString } from '@/application/validation'
+import { TokenGenerator } from '@/domain/contracts/gateways/token'
+import { AccessToken } from '@/domain/entities/access-token'
+
+import { MockProxy, mock } from 'jest-mock-extended'
 
 describe('AddUser Controller', () => {
   let sut: AddUser
   let addUserRequest: AddUser.HttpRequest
   let userModel: AddUser.HttpRequest & { id: string }
   let addUserAccount: jest.Mock
+  let tokenGenerator: MockProxy<TokenGenerator>
 
   beforeAll(() => {
     addUserRequest = {
@@ -18,11 +23,18 @@ describe('AddUser Controller', () => {
       rg: 'any_rg'
     }
 
+    userModel = {
+      id: 'any_id',
+      ...addUserRequest
+    }
+
     addUserAccount = jest.fn().mockResolvedValue(userModel)
+    tokenGenerator = mock()
+    tokenGenerator.generate.mockResolvedValue('any_access_token')
   })
 
   beforeEach(() => {
-    sut = new AddUser(addUserAccount)
+    sut = new AddUser(addUserAccount, tokenGenerator)
   })
 
   it('Should extend Controller', () => {
@@ -46,5 +58,10 @@ describe('AddUser Controller', () => {
   it('Should call SaveUserAccount with correct Input', async () => {
     await sut.handle(addUserRequest)
     expect(addUserAccount).toBeCalledWith(addUserRequest)
+  })
+
+  it('Should call Token generator when SaveUserAccount succeds', async () => {
+    await sut.handle(addUserRequest)
+    expect(tokenGenerator.generate).toBeCalledWith({ key: userModel.id, expirationInMs: AccessToken.expirationInMs })
   })
 })
