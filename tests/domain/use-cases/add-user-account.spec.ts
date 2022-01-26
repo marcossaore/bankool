@@ -1,6 +1,6 @@
 import { mock, MockProxy } from 'jest-mock-extended'
 import { SaveUserAccountRepository } from '@/domain/contracts/repos'
-import { addUserAccount, AddUserAccount } from '@/domain/use-cases/add-user-account'
+import { setupAddUserAccount, AddUserAccount } from '@/domain/use-cases/add-user-account'
 import { TokenGenerator } from '@/domain/contracts/gateways/token'
 import { AccessToken } from '@/domain/entities/access-token'
 
@@ -39,7 +39,7 @@ beforeAll(() => {
 })
 
 beforeEach(() => {
-  sut = addUserAccount(saveUserAccountRepositorySpy, tokenGenerator)
+  sut = setupAddUserAccount(saveUserAccountRepositorySpy, tokenGenerator)
 })
 
 describe('SaveUserAccount UseCase', () => {

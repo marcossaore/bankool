@@ -7,7 +7,7 @@ type Input = SaveUserAccountRepository.Input
 type Output = { accessToken: string }
 export type AddUserAccount = (input: Input) => Promise<Output>
 
-export const addUserAccount: Setup = (saveUserAccountRepository, token) => async (addAccountParams) => {
+export const setupAddUserAccount: Setup = (saveUserAccountRepository, token) => async (addAccountParams) => {
   const user = await saveUserAccountRepository.saveUserAccount(addAccountParams)
   const accessToken = await token.generate({
     key: user.id,
