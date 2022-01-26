@@ -4,9 +4,10 @@ import { RequiredString } from '@/application/validation'
 describe('AddUser Controller', () => {
   let sut: AddUser
   let addUserRequest: AddUser.HttpRequest
+  let userModel: AddUser.HttpRequest & { id: string }
+  let addUserAccount: jest.Mock
 
-  beforeEach(() => {
-    sut = new AddUser()
+  beforeAll(() => {
     addUserRequest = {
       name: 'any_name',
       email: 'any_email',
@@ -16,6 +17,12 @@ describe('AddUser Controller', () => {
       cpf: 'any_cpf',
       rg: 'any_rg'
     }
+
+    addUserAccount = jest.fn().mockResolvedValue(userModel)
+  })
+
+  beforeEach(() => {
+    sut = new AddUser(addUserAccount)
   })
 
   it('Should extend Controller', () => {
@@ -34,5 +41,10 @@ describe('AddUser Controller', () => {
       new RequiredString('any_cpf', 'cpf'),
       new RequiredString('any_rg', 'rg')
     ])
+  })
+
+  it('Should call SaveUserAccount with correct Input', async () => {
+    await sut.handle(addUserRequest)
+    expect(addUserAccount).toBeCalledWith(addUserRequest)
   })
 })

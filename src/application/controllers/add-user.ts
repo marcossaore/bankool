@@ -1,8 +1,14 @@
 import { Controller } from '@/application/controllers'
 import { HttpResponse, ok } from '@/application/helpers'
 import { ValidationBuilder as Builder, Validator } from '@/application/validation'
+import { AddUserAccount } from '@/domain/use-cases'
 export class AddUser extends Controller {
+  constructor (private readonly addUserAccount: AddUserAccount) {
+    super()
+  }
+
   async perform (httpRequest: AddUser.HttpRequest): Promise<HttpResponse> {
+    await this.addUserAccount(httpRequest)
     return ok({})
   }
 
