@@ -4,6 +4,7 @@ import { TokenGenerator } from '@/domain/contracts/gateways/token'
 import { AccessToken } from '@/domain/entities/access-token'
 
 import { MockProxy, mock } from 'jest-mock-extended'
+import { ServerError } from '@/application/errors'
 
 describe('AddUser Controller', () => {
   let sut: AddUser
@@ -70,6 +71,18 @@ describe('AddUser Controller', () => {
     expect(response).toEqual({
       statusCode: 200,
       data: { accessToken: 'any_access_token' }
+    })
+  })
+
+  it('should return 500 on infra error', async () => {
+    const error = new Error('infra_error')
+    tokenGenerator.generate.mockRejectedValueOnce(error)
+
+    const httpResponse = await sut.handle(addUserRequest)
+
+    expect(httpResponse).toEqual({
+      statusCode: 500,
+      data: new ServerError(error)
     })
   })
 })
