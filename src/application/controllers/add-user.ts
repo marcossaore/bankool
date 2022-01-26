@@ -1,23 +1,12 @@
 import { Controller } from '@/application/controllers'
 import { HttpResponse, ok } from '@/application/helpers'
 import { ValidationBuilder as Builder, Validator } from '@/application/validation'
-
-type HttpRequest = {
-  name: string
-  email: string
-  birthDate: string
-  phone: string
-  password: string
-  cpf: string
-  rg: string
-}
-
 export class AddUser extends Controller {
-  async perform (httpRequest: HttpRequest): Promise<HttpResponse> {
+  async perform (httpRequest: AddUser.HttpRequest): Promise<HttpResponse> {
     return ok({})
   }
 
-  override buildValidators (httpRequest: HttpRequest): Validator[] {
+  override buildValidators (httpRequest: AddUser.HttpRequest): Validator[] {
     const builder = []
 
     const requiredFields = [
@@ -37,5 +26,17 @@ export class AddUser extends Controller {
     }
 
     return builder
+  }
+}
+
+export namespace AddUser {
+  export type HttpRequest = {
+    name: string
+    email: string
+    birthDate: string
+    phone: string
+    password: string
+    cpf: string
+    rg: string
   }
 }
