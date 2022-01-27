@@ -28,3 +28,10 @@ export class RegexParamError extends Error {
     this.name = 'RegexParamError'
   }
 }
+
+export class InvalidParamError extends Error {
+  constructor (paramName: string) {
+    super(`Invalid param: ${paramName}`)
+    this.name = 'InvalidParamError'
+  }
+}
