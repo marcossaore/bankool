@@ -21,3 +21,10 @@ export class MaxFileSizeError extends Error {
     this.name = 'MaxFileSizeError'
   }
 }
+
+export class RegexParamError extends Error {
+  constructor (paramName: string, format: string) {
+    super(`${paramName} must contains the format: ${format}`)
+    this.name = 'RegexParamError'
+  }
+}
