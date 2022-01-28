@@ -1,7 +1,6 @@
-import { Validator } from '@/application/validation'
-import { Email } from './email'
-import { EmailValidatorAdapter } from '@/infra/gateways/'
-import { DateValidation } from './date-validation'
+import { Validator , Cpf, Email, DateValidation } from '@/application/validation'
+
+import { EmailValidatorAdapter, CpfValidatorAdapter } from '@/infra/gateways/'
 
 export class ValidationBuilderStrict {
   private constructor (
@@ -21,6 +20,11 @@ export class ValidationBuilderStrict {
 
   date (): ValidationBuilderStrict {
     this.validators.push(new DateValidation(this.value, this.fieldName))
+    return this
+  }
+
+  cpf (): ValidationBuilderStrict {
+    this.validators.push(new Cpf(this.value, this.fieldName, new CpfValidatorAdapter()))
     return this
   }
 
