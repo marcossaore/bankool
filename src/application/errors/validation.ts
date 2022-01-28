@@ -49,3 +49,10 @@ export class InvalidCpfParamError extends InvalidParamError {
     this.name = 'InvalidCpfParamError'
   }
 }
+
+export class InvalidDateError extends InvalidParamError {
+  constructor (paramName: string) {
+    super(`Invalid param: ${paramName}, format date must be: YYYY-mm-dd (hh:mm) optional`)
+    this.name = 'InvalidDateError'
+  }
+}
