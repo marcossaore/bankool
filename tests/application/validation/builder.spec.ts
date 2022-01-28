@@ -1,4 +1,6 @@
-import { AllowedMimeTypes, MaxFileSize, Required, RequiredBuffer, RequiredString, ValidationBuilder } from '@/application/validation'
+import { AllowedMimeTypes, MaxFileSize, Required, RequiredBuffer, RequiredString, ValidationBuilder, Email, DateValidation, Cpf } from '@/application/validation'
+import { CpfValidatorAdapter, EmailValidatorAdapter } from '@/infra/gateways'
+import { BuilderFieldNameRequiredError } from '@/application/validation/builder-field-name-required-error'
 
 describe('ValidationBuilder', () => {
   it('should return RequiredString', () => {
@@ -76,5 +78,75 @@ describe('ValidationBuilder', () => {
       new AllowedMimeTypes(['png'], 'image/png'),
       new MaxFileSize(6, buffer)
     ])
+  })
+
+  it('should return Email', () => {
+    const params = { value: 'any_email', fieldName: 'value' }
+    const validators = ValidationBuilder
+      .of(params)
+      .email()
+      .build()
+
+    expect(validators).toEqual([
+      new Email(params.value, params.fieldName, new EmailValidatorAdapter())
+    ])
+  })
+
+  it('should return Date Validation ', () => {
+    const params = { value: 'any_value', fieldName: 'value' }
+    const validators = ValidationBuilder
+      .of(params)
+      .date()
+      .build()
+
+    expect(validators).toEqual([
+      new DateValidation(params.value, params.fieldName)
+    ])
+  })
+
+  it('should return Cpf Validation ', () => {
+    const params = { value: 'any_value', fieldName: 'value' }
+    const validators = ValidationBuilder
+      .of(params)
+      .cpf()
+      .build()
+
+    expect(validators).toEqual([
+      new Cpf(params.value, params.fieldName, new CpfValidatorAdapter())
+    ])
+  })
+
+  it('should return correct validators', () => {
+    const params = { value: 'any_email', fieldName: 'value' }
+    const validators = ValidationBuilder
+      .of(params)
+      .email()
+      .date()
+      .cpf()
+      .build()
+
+    expect(validators).toEqual([
+      new Email(params.value, params.fieldName, new EmailValidatorAdapter()),
+      new DateValidation(params.value, params.fieldName),
+      new Cpf(params.value, params.fieldName, new CpfValidatorAdapter())
+    ])
+  })
+
+  it('should throw if fieldName is no provided when call email method', () => {
+    const builder = ValidationBuilder.of({ value: 'any_email' })
+
+    expect(builder.email).toThrowError(new BuilderFieldNameRequiredError('email'))
+  })
+
+  it('should throw if fieldName is no provided when call date method', () => {
+    const builder = ValidationBuilder.of({ value: 'any_date' })
+
+    expect(builder.date).toThrowError(new BuilderFieldNameRequiredError('date'))
+  })
+
+  it('should throw if fieldName is no provided when call cpf method', () => {
+    const builder = ValidationBuilder.of({ value: 'any_date' })
+
+    expect(builder.cpf).toThrowError(new BuilderFieldNameRequiredError('cpf'))
   })
 })

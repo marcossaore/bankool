@@ -1,4 +1,6 @@
-import { Validator, AllowedMimeTypes, Extension, MaxFileSize, Required, RequiredBuffer, RequiredString } from '@/application/validation'
+import { Validator, AllowedMimeTypes, Extension, MaxFileSize, Required, RequiredBuffer, RequiredString, Email, DateValidation, Cpf } from '@/application/validation'
+import { CpfValidatorAdapter, EmailValidatorAdapter } from '@/infra/gateways'
+import { BuilderFieldNameRequiredError } from './builder-field-name-required-error'
 
 export class ValidationBuilder {
   private constructor (
@@ -32,6 +34,30 @@ export class ValidationBuilder {
     if (this.value.buffer !== undefined) {
       this.validators.push(new MaxFileSize(maxSizeInMb, this.value.buffer))
     }
+    return this
+  }
+
+  email (): ValidationBuilder {
+    if (!this?.fieldName) {
+      throw new BuilderFieldNameRequiredError('email')
+    }
+    this.validators.push(new Email(this.value, this.fieldName, new EmailValidatorAdapter()))
+    return this
+  }
+
+  date (): ValidationBuilder {
+    if (!this?.fieldName) {
+      throw new BuilderFieldNameRequiredError('date')
+    }
+    this.validators.push(new DateValidation(this.value, this.fieldName))
+    return this
+  }
+
+  cpf (): ValidationBuilder {
+    if (!this?.fieldName) {
+      throw new BuilderFieldNameRequiredError('cpf')
+    }
+    this.validators.push(new Cpf(this.value, this.fieldName, new CpfValidatorAdapter()))
     return this
   }
 

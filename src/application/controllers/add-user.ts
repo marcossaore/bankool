@@ -1,6 +1,6 @@
 import { Controller } from '@/application/controllers'
 import { HttpResponse, ok } from '@/application/helpers'
-import { ValidationBuilder as Builder, ValidationBuilderStrict as BuilderStrict, Validator } from '@/application/validation'
+import { ValidationBuilder as Builder, Validator } from '@/application/validation'
 import { TokenGenerator } from '@/domain/contracts/gateways/token'
 import { AccessToken } from '@/domain/entities/access-token'
 import { AddUserAccount } from '@/domain/use-cases'
@@ -41,9 +41,9 @@ export class AddUser extends Controller {
 
     const { email, cpf } = httpRequest
 
-    builder.push(...BuilderStrict.of({ value: email, fieldName: 'email' }).email().build())
+    builder.push(...Builder.of({ value: email, fieldName: 'email' }).email().build())
 
-    builder.push(...BuilderStrict.of({ value: cpf, fieldName: 'cpf' }).cpf().build())
+    builder.push(...Builder.of({ value: cpf, fieldName: 'cpf' }).cpf().build())
     return builder
   }
 }
