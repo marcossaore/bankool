@@ -1,10 +1,11 @@
 import { AddUser, Controller } from '@/application/controllers'
-import { RequiredString } from '@/application/validation'
+import { RequiredString, Email } from '@/application/validation'
 import { TokenGenerator } from '@/domain/contracts/gateways/token'
 import { AccessToken } from '@/domain/entities/access-token'
 
 import { MockProxy, mock } from 'jest-mock-extended'
 import { ServerError } from '@/application/errors'
+import { EmailValidatorAdapter } from '@/infra/gateways'
 
 describe('AddUser Controller', () => {
   let sut: AddUser
@@ -16,7 +17,7 @@ describe('AddUser Controller', () => {
   beforeAll(() => {
     addUserRequest = {
       name: 'any_name',
-      email: 'any_email',
+      email: 'any_email@mail.com',
       birthDate: 'any_birthday',
       phone: 'any_phone',
       password: 'any_password',
@@ -47,12 +48,13 @@ describe('AddUser Controller', () => {
 
     expect(validators).toEqual([
       new RequiredString('any_name', 'name'),
-      new RequiredString('any_email', 'email'),
+      new RequiredString('any_email@mail.com', 'email'),
       new RequiredString('any_birthday', 'birthDate'),
       new RequiredString('any_phone', 'phone'),
       new RequiredString('any_password', 'password'),
       new RequiredString('any_cpf', 'cpf'),
-      new RequiredString('any_rg', 'rg')
+      new RequiredString('any_rg', 'rg'),
+      new Email('any_email@mail.com', 'email', new EmailValidatorAdapter())
     ])
   })
 

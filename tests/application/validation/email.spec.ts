@@ -1,5 +1,5 @@
 import { Email, EmailValidator } from '@/application/validation'
-import { InvalidParamError } from '@/application/errors'
+import { InvalidEmailParamError } from '@/application/errors'
 
 import { mock, MockProxy } from 'jest-mock-extended'
 
@@ -31,7 +31,7 @@ describe('Email Validation', () => {
     const { sut } = makeSut(params.email, 'email')
 
     const error = sut.validate()
-    expect(error).toEqual(new InvalidParamError('email'))
+    expect(error).toEqual(new InvalidEmailParamError('email'))
   })
 
   test('Should call EmailValidator with correct email', () => {

@@ -1,5 +1,5 @@
 import { EmailValidator, Validator } from '@/application/validation'
-import { InvalidParamError } from '@/application/errors'
+import { InvalidEmailParamError } from '@/application/errors'
 
 export class Email implements Validator {
   private readonly value: string
@@ -15,7 +15,7 @@ export class Email implements Validator {
   validate (): Error | undefined {
     const isValid = this.emailValidator.isValid(this.value)
     if (!isValid) {
-      return new InvalidParamError(this.field)
+      return new InvalidEmailParamError(this.field)
     }
   }
 }
