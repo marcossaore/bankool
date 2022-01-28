@@ -34,6 +34,13 @@ describe('Email Validation', () => {
     expect(error).toEqual(new InvalidEmailParamError('email'))
   })
 
+  test('Should not return an error if EmailValidator returns true', () => {
+    const { sut } = makeSut(params.email, 'email')
+    emailValidator.isValid.mockReturnValue(true)
+    const error = sut.validate()
+    expect(error).toBeFalsy()
+  })
+
   test('Should call EmailValidator with correct email', () => {
     const { sut, emailValidator } = makeSut(params.email, 'email')
     sut.validate()
