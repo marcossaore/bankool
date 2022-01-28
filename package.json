@@ -19,6 +19,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "cpf-cnpj-validator": "^1.0.3",
     "jsonwebtoken": "^8.5.1",
     "module-alias": "^2.2.0",
     "validator": "^13.7.0"
