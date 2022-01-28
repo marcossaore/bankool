@@ -1,7 +1,7 @@
 import { Validator } from '@/application/validation'
 import { Email } from './email'
-import { RegexValidation } from './regex'
 import { EmailValidatorAdapter } from '@/infra/gateways/'
+import { DateValidation } from './date-validation'
 
 export class ValidationBuilderStrict {
   private constructor (
@@ -19,8 +19,8 @@ export class ValidationBuilderStrict {
     return this
   }
 
-  regex (regex: RegExp, format: string): ValidationBuilderStrict {
-    this.validators.push(new RegexValidation(this.value, this.fieldName, regex, format))
+  date (): ValidationBuilderStrict {
+    this.validators.push(new DateValidation(this.value, this.fieldName))
     return this
   }
 

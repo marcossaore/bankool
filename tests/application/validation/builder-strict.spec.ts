@@ -1,4 +1,4 @@
-import { Email, ValidationBuilderStrict, RegexValidation } from '@/application/validation'
+import { Email, ValidationBuilderStrict, DateValidation } from '@/application/validation'
 
 import { EmailValidatorAdapter } from '@/infra/gateways'
 
@@ -15,15 +15,15 @@ describe('ValidationBuilderStrict', () => {
     ])
   })
 
-  it('should return regex ', () => {
-    const params = { value: 'Text with Hour 13:00', fieldName: 'value' }
+  it('should return Date Validation ', () => {
+    const params = { value: 'any_value', fieldName: 'value' }
     const validators = ValidationBuilderStrict
       .of(params)
-      .regex(/\d{2}:\d{2}/, '00:00')
+      .date()
       .build()
 
     expect(validators).toEqual([
-      new RegexValidation(params.value, params.fieldName, /\d{2}:\d{2}/, '00:00')
+      new DateValidation(params.value, params.fieldName)
     ])
   })
 
@@ -32,12 +32,12 @@ describe('ValidationBuilderStrict', () => {
     const validators = ValidationBuilderStrict
       .of(params)
       .email()
-      .regex(/@/, '@')
+      .date()
       .build()
 
     expect(validators).toEqual([
       new Email(params.value, params.fieldName, new EmailValidatorAdapter()),
-      new RegexValidation(params.value, params.fieldName, /@/, '@')
+      new DateValidation(params.value, params.fieldName)
     ])
   })
 })
