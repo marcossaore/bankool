@@ -35,3 +35,17 @@ export class InvalidParamError extends Error {
     this.name = 'InvalidParamError'
   }
 }
+
+export class InvalidEmailParamError extends InvalidParamError {
+  constructor (paramName: string) {
+    super(`Invalid param: ${paramName} is not a valid email`)
+    this.name = 'InvalidEmailParamError'
+  }
+}
+
+export class InvalidCpfParamError extends InvalidParamError {
+  constructor (paramName: string) {
+    super(`Invalid param: ${paramName} is not a valid cpf`)
+    this.name = 'InvalidCpfParamError'
+  }
+}

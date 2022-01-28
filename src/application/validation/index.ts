@@ -1,7 +1,9 @@
 
 export * from './validator'
 export * from './email-validator'
+export * from './cpf-validator'
 export * from './email'
+export * from './cpf'
 export * from './required'
 export * from './allowed-mime-types'
 export * from './max-file-size'
