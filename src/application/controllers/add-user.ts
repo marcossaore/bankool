@@ -39,8 +39,11 @@ export class AddUser extends Controller {
       }
     }
 
-    builder.push(...BuilderStrict.of({ value: httpRequest.email, fieldName: 'email' }).email().build())
+    const { email, cpf } = httpRequest
 
+    builder.push(...BuilderStrict.of({ value: email, fieldName: 'email' }).email().build())
+
+    builder.push(...BuilderStrict.of({ value: cpf, fieldName: 'cpf' }).cpf().build())
     return builder
   }
 }

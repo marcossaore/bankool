@@ -1,11 +1,29 @@
 import { AddUser, Controller } from '@/application/controllers'
-import { RequiredString, Email } from '@/application/validation'
+import { RequiredString, Email, Cpf } from '@/application/validation'
 import { TokenGenerator } from '@/domain/contracts/gateways/token'
 import { AccessToken } from '@/domain/entities/access-token'
+import { ServerError } from '@/application/errors'
 
 import { MockProxy, mock } from 'jest-mock-extended'
-import { ServerError } from '@/application/errors'
-import { EmailValidatorAdapter } from '@/infra/gateways'
+
+jest.mock('@/infra/gateways/email-validator-adapter', () => {
+  return {
+    EmailValidatorAdapter: jest.fn().mockImplementation(() => {
+      return {
+        isValid: jest.fn().mockReturnValue(true)
+      }
+    })
+  }
+})
+jest.mock('@/infra/gateways/cpf-validator-adapter', () => {
+  return {
+    CpfValidatorAdapter: jest.fn().mockImplementation(() => {
+      return {
+        isValid: jest.fn().mockReturnValue(true)
+      }
+    })
+  }
+})
 
 describe('AddUser Controller', () => {
   let sut: AddUser
@@ -17,7 +35,7 @@ describe('AddUser Controller', () => {
   beforeAll(() => {
     addUserRequest = {
       name: 'any_name',
-      email: 'any_email@mail.com',
+      email: 'any_email',
       birthDate: 'any_birthday',
       phone: 'any_phone',
       password: 'any_password',
@@ -44,18 +62,19 @@ describe('AddUser Controller', () => {
   })
 
   it('should build Validators correctly', async () => {
+    jest.mock('@/infra/gateways/email-validator-adapter').clearAllMocks()
+
     const validators = sut.buildValidators(addUserRequest)
 
-    expect(validators).toEqual([
-      new RequiredString('any_name', 'name'),
-      new RequiredString('any_email@mail.com', 'email'),
-      new RequiredString('any_birthday', 'birthDate'),
-      new RequiredString('any_phone', 'phone'),
-      new RequiredString('any_password', 'password'),
-      new RequiredString('any_cpf', 'cpf'),
-      new RequiredString('any_rg', 'rg'),
-      new Email('any_email@mail.com', 'email', new EmailValidatorAdapter())
-    ])
+    expect(validators[0]).toEqual(new RequiredString('any_name', 'name'))
+    expect(validators[1]).toEqual(new RequiredString('any_email', 'email'))
+    expect(validators[2]).toEqual(new RequiredString('any_birthday', 'birthDate'))
+    expect(validators[3]).toEqual(new RequiredString('any_phone', 'phone'))
+    expect(validators[4]).toEqual(new RequiredString('any_password', 'password'))
+    expect(validators[5]).toEqual(new RequiredString('any_cpf', 'cpf'))
+    expect(validators[6]).toEqual(new RequiredString('any_rg', 'rg'))
+    expect(validators[7]).toBeInstanceOf(Email)
+    expect(validators[8]).toBeInstanceOf(Cpf)
   })
 
   it('Should call SaveUserAccount with correct Input', async () => {
