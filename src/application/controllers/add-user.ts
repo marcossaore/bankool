@@ -13,14 +13,18 @@ export class AddUser extends Controller {
   }
 
   async perform (httpRequest: AddUser.RequestInput): Promise<HttpResponse> {
-    const accountExists = await this.userAccount.exists({ cpf: httpRequest.cpf })
+    const { cpf, name, email, birthDate } = httpRequest
+    const accountExists = await this.userAccount.exists({ cpf })
     if (accountExists) {
       return forbidden(new UserAccountAlreadyInUseError())
     }
     const user = await this.userAccount.add(httpRequest)
     const accessToken = await this.tokenGenerator.generate({ key: user.id, expirationInMs: AccessToken.expirationInMs })
     return ok({
-      accessToken
+      accessToken,
+      name,
+      email,
+      birthDate
     })
   }
 

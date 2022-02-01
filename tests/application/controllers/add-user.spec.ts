@@ -106,7 +106,12 @@ describe('AddUser Controller', () => {
     const response = await sut.handle(requestInput)
     expect(response).toEqual({
       statusCode: 200,
-      data: { accessToken: 'any_access_token' }
+      data: {
+        accessToken: 'any_access_token',
+        name: 'any_name',
+        email: 'any_email',
+        birthDate: 'any_birthday'
+      }
     })
   })
 
