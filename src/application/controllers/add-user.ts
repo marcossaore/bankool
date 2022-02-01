@@ -2,18 +2,19 @@ import { Controller } from '@/application/controllers'
 import { HttpResponse, ok } from '@/application/helpers'
 import { ValidationBuilder as Builder, Validator } from '@/application/validation'
 import { TokenGenerator } from '@/domain/contracts/gateways/token'
-import { AddUserAccount } from '@/domain/contracts/gateways/user'
+import { AddUserAccount, VerifyUserExists } from '@/domain/contracts/gateways/user'
 import { AccessToken } from '@/domain/entities/access-token'
 export class AddUser extends Controller {
   constructor (
-    private readonly addUserAccount: AddUserAccount,
+    private readonly userAccount: AddUserAccount & VerifyUserExists,
     private readonly tokenGenerator: TokenGenerator
   ) {
     super()
   }
 
   async perform (httpRequest: AddUser.RequestInput): Promise<HttpResponse> {
-    const user = await this.addUserAccount.add(httpRequest)
+    await this.userAccount.exists({ email: httpRequest.email })
+    const user = await this.userAccount.add(httpRequest)
     const accessToken = await this.tokenGenerator.generate({ key: user.id, expirationInMs: AccessToken.expirationInMs })
     return ok({
       accessToken

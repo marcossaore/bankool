@@ -1,14 +1,15 @@
 import { mock, MockProxy } from 'jest-mock-extended'
+import { DbAddUserAccount } from '@/domain/use-cases'
+import { AddUserAccount } from '@/domain/contracts/gateways/user'
 import { SaveUserAccountRepository } from '@/domain/contracts/repos'
-import { setupAddUserAccount, AddUserAccount } from '@/domain/use-cases/add-user-account'
 
-let mockUserAddAccount: SaveUserAccountRepository.Input
-let mockUserAccount: SaveUserAccountRepository.Output
+let userInput: AddUserAccount.Input
+let userOutput: AddUserAccount.Output
 let saveUserAccountRepositorySpy: MockProxy<SaveUserAccountRepository>
-let sut: AddUserAccount
+let sut: DbAddUserAccount
 
 beforeAll(() => {
-  mockUserAddAccount = {
+  userInput = {
     name: 'any_name',
     email: 'any_email',
     birthDate: 'any_birthDate',
@@ -18,36 +19,30 @@ beforeAll(() => {
     rg: 'any_rg'
   }
 
-  mockUserAccount = {
-    name: 'any_name',
-    email: 'any_email',
-    birthDate: 'any_birthDate',
-    phone: 'any_phone',
-    password: 'any_password',
-    cpf: 'any_cpf',
-    rg: 'any_rg',
+  userOutput = {
     id: 'any_id'
   }
+
   saveUserAccountRepositorySpy = mock()
-  saveUserAccountRepositorySpy.saveUserAccount.mockResolvedValue(mockUserAccount)
+  saveUserAccountRepositorySpy.saveUserAccount.mockResolvedValue(userOutput)
 })
 
 beforeEach(() => {
-  sut = setupAddUserAccount(saveUserAccountRepositorySpy)
+  sut = new DbAddUserAccount(saveUserAccountRepositorySpy)
 })
 
 describe('SaveUserAccount UseCase', () => {
   it('Should call SaveUserAccountRepository with correct input', async () => {
-    await sut(mockUserAddAccount)
+    await sut.add(userInput)
 
-    expect(saveUserAccountRepositorySpy.saveUserAccount).toHaveBeenCalledWith(mockUserAddAccount)
+    expect(saveUserAccountRepositorySpy.saveUserAccount).toHaveBeenCalledWith(userInput)
     expect(saveUserAccountRepositorySpy.saveUserAccount).toHaveBeenCalledTimes(1)
   })
 
   it('Should return an user account when succeds', async () => {
-    const user = await sut(mockUserAddAccount)
+    const user = await sut.add(userInput)
 
-    expect(user).toEqual(mockUserAccount)
+    expect(user).toEqual(userOutput)
   })
 
   it('Should rethrow if SaveUserAccountRepository throws', async () => {
@@ -55,7 +50,7 @@ describe('SaveUserAccount UseCase', () => {
       throw new Error()
     })
 
-    const promise = sut(mockUserAddAccount)
+    const promise = sut.add(userInput)
 
     await expect(promise).rejects.toThrow()
   })

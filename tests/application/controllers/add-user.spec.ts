@@ -3,6 +3,7 @@ import { RequiredString, Email, Cpf } from '@/application/validation'
 import { TokenGenerator } from '@/domain/contracts/gateways/token'
 import { AccessToken } from '@/domain/entities/access-token'
 import { ServerError } from '@/application/errors'
+import { AddUserAccount, VerifyUserExists } from '@/domain/contracts/gateways/user'
 
 import { MockProxy, mock } from 'jest-mock-extended'
 
@@ -27,13 +28,13 @@ jest.mock('@/infra/gateways/cpf-validator-adapter', () => {
 
 describe('AddUser Controller', () => {
   let sut: AddUser
-  let addUserRequest: AddUser.HttpRequest
-  let userModel: AddUser.HttpRequest & { id: string }
-  let addUserAccount: jest.Mock
+  let requestInput: AddUser.RequestInput
+  let userModel: { id: string }
+  let userAccount: MockProxy<AddUserAccount> & MockProxy<VerifyUserExists>
   let tokenGenerator: MockProxy<TokenGenerator>
 
   beforeAll(() => {
-    addUserRequest = {
+    requestInput = {
       name: 'any_name',
       email: 'any_email',
       birthDate: 'any_birthday',
@@ -44,17 +45,18 @@ describe('AddUser Controller', () => {
     }
 
     userModel = {
-      id: 'any_id',
-      ...addUserRequest
+      id: 'any_id'
     }
 
-    addUserAccount = jest.fn().mockResolvedValue(userModel)
+    userAccount = mock()
+    userAccount.add.mockResolvedValue(userModel)
+    // userAccount.exists.mockResolvedValue(true)
     tokenGenerator = mock()
     tokenGenerator.generate.mockResolvedValue('any_access_token')
   })
 
   beforeEach(() => {
-    sut = new AddUser(addUserAccount, tokenGenerator)
+    sut = new AddUser(userAccount, tokenGenerator)
   })
 
   it('Should extend Controller', () => {
@@ -64,7 +66,7 @@ describe('AddUser Controller', () => {
   it('should build Validators correctly', async () => {
     jest.mock('@/infra/gateways/email-validator-adapter').clearAllMocks()
 
-    const validators = sut.buildValidators(addUserRequest)
+    const validators = sut.buildValidators(requestInput)
 
     expect(validators[0]).toEqual(new RequiredString('any_name', 'name'))
     expect(validators[1]).toEqual(new RequiredString('any_email', 'email'))
@@ -78,17 +80,22 @@ describe('AddUser Controller', () => {
   })
 
   it('Should call SaveUserAccount with correct Input', async () => {
-    await sut.handle(addUserRequest)
-    expect(addUserAccount).toBeCalledWith(addUserRequest)
+    await sut.handle(requestInput)
+    expect(userAccount.add).toBeCalledWith(requestInput)
   })
 
-  it('Should call Token generator when SaveUserAccount succeds', async () => {
-    await sut.handle(addUserRequest)
+  it('Should call VerifyUserExists with correct Input', async () => {
+    await sut.handle(requestInput)
+    expect(userAccount.exists).toBeCalledWith({ email: requestInput.email })
+  })
+
+  it('Should call FindUserByEmail generator when SaveUserAccount succeds', async () => {
+    await sut.handle(requestInput)
     expect(tokenGenerator.generate).toBeCalledWith({ key: userModel.id, expirationInMs: AccessToken.expirationInMs })
   })
 
   it('Should return 200 with an access token on success', async () => {
-    const response = await sut.handle(addUserRequest)
+    const response = await sut.handle(requestInput)
     expect(response).toEqual({
       statusCode: 200,
       data: { accessToken: 'any_access_token' }
@@ -99,7 +106,7 @@ describe('AddUser Controller', () => {
     const error = new Error('infra_error')
     tokenGenerator.generate.mockRejectedValueOnce(error)
 
-    const httpResponse = await sut.handle(addUserRequest)
+    const httpResponse = await sut.handle(requestInput)
 
     expect(httpResponse).toEqual({
       statusCode: 500,
