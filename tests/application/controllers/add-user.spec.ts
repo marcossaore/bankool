@@ -103,10 +103,11 @@ describe('AddUser Controller', () => {
   })
 
   it('Should return 200 with an access token on success', async () => {
-    const response = await sut.handle(requestInput)
-    expect(response).toEqual({
+    const httpResponse = await sut.handle(requestInput)
+    expect(httpResponse).toEqual({
       statusCode: 200,
       data: {
+        id: userModel.id,
         accessToken: 'any_access_token',
         name: 'any_name',
         email: 'any_email',

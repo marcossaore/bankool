@@ -12,23 +12,24 @@ export class AddUser extends Controller {
     super()
   }
 
-  async perform (httpRequest: AddUser.RequestInput): Promise<HttpResponse> {
-    const { cpf, name, email, birthDate } = httpRequest
+  async perform (request: AddUser.RequestInput): Promise<HttpResponse<AddUser.RequestOutput>> {
+    const { cpf, name, email, birthDate } = request
     const accountExists = await this.userAccount.exists({ cpf })
     if (accountExists) {
       return forbidden(new UserAccountAlreadyInUseError())
     }
-    const user = await this.userAccount.add(httpRequest)
-    const accessToken = await this.tokenGenerator.generate({ key: user.id, expirationInMs: AccessToken.expirationInMs })
+    const { id } = await this.userAccount.add(request)
+    const accessToken = await this.tokenGenerator.generate({ key: id, expirationInMs: AccessToken.expirationInMs })
     return ok({
       accessToken,
+      id,
       name,
       email,
       birthDate
     })
   }
 
-  override buildValidators (httpRequest: AddUser.RequestInput): Validator[] {
+  override buildValidators (request: AddUser.RequestInput): Validator[] {
     const builder = []
 
     const requiredFields = [
@@ -41,13 +42,13 @@ export class AddUser extends Controller {
       'rg'
     ]
 
-    for (const [key, value] of Object.entries(httpRequest)) {
+    for (const [key, value] of Object.entries(request)) {
       if (requiredFields.includes(key)) {
         builder.push(...Builder.of({ value: value, fieldName: key }).required().build())
       }
     }
 
-    const { email, cpf } = httpRequest
+    const { email, cpf } = request
 
     builder.push(...Builder.of({ value: email, fieldName: 'email' }).email().build())
 
@@ -66,4 +67,12 @@ export namespace AddUser {
     cpf: string
     rg: string
   }
+
+  export type RequestOutput = {
+    id: string
+    name: string
+    email: string
+    birthDate: string
+    accessToken: string
+  } | Error
 }
