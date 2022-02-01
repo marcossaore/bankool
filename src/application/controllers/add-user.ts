@@ -2,8 +2,8 @@ import { Controller } from '@/application/controllers'
 import { HttpResponse, ok } from '@/application/helpers'
 import { ValidationBuilder as Builder, Validator } from '@/application/validation'
 import { TokenGenerator } from '@/domain/contracts/gateways/token'
+import { AddUserAccount } from '@/domain/contracts/gateways/user'
 import { AccessToken } from '@/domain/entities/access-token'
-import { AddUserAccount } from '@/domain/use-cases'
 export class AddUser extends Controller {
   constructor (
     private readonly addUserAccount: AddUserAccount,
@@ -12,15 +12,15 @@ export class AddUser extends Controller {
     super()
   }
 
-  async perform (httpRequest: AddUser.HttpRequest): Promise<HttpResponse> {
-    const user = await this.addUserAccount(httpRequest)
+  async perform (httpRequest: AddUser.RequestInput): Promise<HttpResponse> {
+    const user = await this.addUserAccount.add(httpRequest)
     const accessToken = await this.tokenGenerator.generate({ key: user.id, expirationInMs: AccessToken.expirationInMs })
     return ok({
       accessToken
     })
   }
 
-  override buildValidators (httpRequest: AddUser.HttpRequest): Validator[] {
+  override buildValidators (httpRequest: AddUser.RequestInput): Validator[] {
     const builder = []
 
     const requiredFields = [
@@ -49,7 +49,7 @@ export class AddUser extends Controller {
 }
 
 export namespace AddUser {
-  export type HttpRequest = {
+  export type RequestInput = {
     name: string
     email: string
     birthDate: string
