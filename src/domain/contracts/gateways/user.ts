@@ -10,10 +10,10 @@ export namespace AddUserAccount {
 }
 
 export interface VerifyUserExists {
-  exists: ({ email: string }: VerifyUserExists.Input) => Promise<void>
+  exists: ({ cpf: string }: VerifyUserExists.Input) => Promise<VerifyUserExists.Output>
 }
 
 export namespace VerifyUserExists {
-  export type Input = { email: string }
-  export type Output = UserAccountModel
+  export type Input = { cpf: string }
+  export type Output = boolean
 }

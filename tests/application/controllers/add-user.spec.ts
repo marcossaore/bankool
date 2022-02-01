@@ -1,9 +1,8 @@
 import { AddUser, Controller } from '@/application/controllers'
 import { RequiredString, Email, Cpf } from '@/application/validation'
-import { TokenGenerator } from '@/domain/contracts/gateways/token'
-import { AccessToken } from '@/domain/entities/access-token'
-import { ServerError } from '@/application/errors'
-import { AddUserAccount, VerifyUserExists } from '@/domain/contracts/gateways/user'
+import { TokenGenerator, AddUserAccount, VerifyUserExists } from '@/domain/contracts/gateways'
+import { AccessToken } from '@/domain/entities'
+import { ServerError, UserAccountAlreadyInUseError } from '@/application/errors'
 
 import { MockProxy, mock } from 'jest-mock-extended'
 
@@ -50,7 +49,7 @@ describe('AddUser Controller', () => {
 
     userAccount = mock()
     userAccount.add.mockResolvedValue(userModel)
-    // userAccount.exists.mockResolvedValue(true)
+    userAccount.exists.mockResolvedValue(false)
     tokenGenerator = mock()
     tokenGenerator.generate.mockResolvedValue('any_access_token')
   })
@@ -86,10 +85,19 @@ describe('AddUser Controller', () => {
 
   it('Should call VerifyUserExists with correct Input', async () => {
     await sut.handle(requestInput)
-    expect(userAccount.exists).toBeCalledWith({ email: requestInput.email })
+    expect(userAccount.exists).toBeCalledWith({ cpf: requestInput.cpf })
   })
 
-  it('Should call FindUserByEmail generator when SaveUserAccount succeds', async () => {
+  it('Should return 409 if VerifyUserExists returns true', async () => {
+    userAccount.exists.mockResolvedValueOnce(true)
+    const httpResponse = await sut.handle(requestInput)
+    expect(httpResponse).toEqual({
+      statusCode: 403,
+      data: new UserAccountAlreadyInUseError()
+    })
+  })
+
+  it('Should call Token Generator when SaveUserAccount succeds', async () => {
     await sut.handle(requestInput)
     expect(tokenGenerator.generate).toBeCalledWith({ key: userModel.id, expirationInMs: AccessToken.expirationInMs })
   })

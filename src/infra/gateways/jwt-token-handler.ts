@@ -1,4 +1,4 @@
-import { TokenGenerator } from '@/domain/contracts/gateways/token'
+import { TokenGenerator } from '@/domain/contracts/gateways'
 
 import { sign } from 'jsonwebtoken'
 
