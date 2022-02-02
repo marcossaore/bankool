@@ -14,7 +14,7 @@ beforeAll(() => {
   }
 
   verifyUserExistsRepository = mock()
-  verifyUserExistsRepository.exists.mockResolvedValue(false)
+  verifyUserExistsRepository.verifyUserExists.mockResolvedValue(false)
 })
 
 beforeEach(() => {
@@ -25,11 +25,11 @@ describe('DbVerifyUserExists UseCase', () => {
   it('Should call VerifyUserExistsRepo with correct input', async () => {
     await sut.exists(input)
 
-    expect(verifyUserExistsRepository.exists).toHaveBeenCalledWith(input)
+    expect(verifyUserExistsRepository.verifyUserExists).toHaveBeenCalledWith(input)
   })
 
   it('Should return true if VerifyUserExistsRepo returns true', async () => {
-    verifyUserExistsRepository.exists.mockResolvedValueOnce(true)
+    verifyUserExistsRepository.verifyUserExists.mockResolvedValueOnce(true)
 
     const exists = await sut.exists(input)
 
@@ -43,7 +43,7 @@ describe('DbVerifyUserExists UseCase', () => {
   })
 
   it('Should rethrow if VerifyUserExistsRepository throws', async () => {
-    verifyUserExistsRepository.exists.mockImplementationOnce(() => {
+    verifyUserExistsRepository.verifyUserExists.mockImplementationOnce(() => {
       throw new Error()
     })
 

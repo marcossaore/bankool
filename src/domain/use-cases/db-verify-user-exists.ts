@@ -7,7 +7,7 @@ export class DbVerifyUserExists {
   ) {}
 
   async exists (input: VerifyUserExists.Input): Promise<VerifyUserExists.Output> {
-    const exists = await this.verifyUserExistsRepository.exists(input)
+    const exists = await this.verifyUserExistsRepository.verifyUserExists(input)
     return exists
   }
 }

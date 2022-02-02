@@ -10,9 +10,10 @@ export namespace SaveUserAccountRepository {
 }
 
 export interface VerifyUserExistsRepository {
-  exists: (input: VerifyUserExistsRepository.Input) => Promise<boolean>
+  verifyUserExists: (input: VerifyUserExistsRepository.Input) => Promise<VerifyUserExistsRepository.Output>
 }
 
-namespace VerifyUserExistsRepository {
+export namespace VerifyUserExistsRepository {
   export type Input = { cpf: string }
+  export type Output = boolean
 }
