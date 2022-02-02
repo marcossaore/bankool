@@ -32,11 +32,22 @@ describe('', () => {
   })
 
   describe('AccountMongoRepository', () => {
-    it('Should create an account on success', async () => {
-      const userCreated = await sut.saveUserAccount(addAccountParams)
-      const usersSavedInDb = await usersAccountCollection.find().toArray()
-      expect(usersSavedInDb.length).toBe(1)
-      expect(usersSavedInDb[0]._id.toString()).toBe(userCreated.id)
+    describe('saveUserAccount', () => {
+      it('Should create an account on success', async () => {
+        const userCreated = await sut.saveUserAccount(addAccountParams)
+        const usersSavedInDb = await usersAccountCollection.find().toArray()
+
+        expect(usersSavedInDb.length).toBe(1)
+        expect(usersSavedInDb[0]._id.toString()).toBe(userCreated.id)
+      })
+    })
+
+    describe('verifyUserExists', () => {
+      it('Should return false if account doesnt exist', async () => {
+        const exists = await sut.verifyUserExists({ cpf: 'any_cpf' })
+
+        expect(exists).toBe(false)
+      })
     })
   })
 })
