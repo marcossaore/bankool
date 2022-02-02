@@ -35,10 +35,12 @@ describe('', () => {
     describe('saveUserAccount', () => {
       it('Should create an account on success', async () => {
         const userCreated = await sut.saveUserAccount(addAccountParams)
-        const usersSavedInDb = await accountCollection.find().toArray()
+        const usersSavedInDb = await accountCollection.findOne()
 
-        expect(usersSavedInDb.length).toBe(1)
-        expect(usersSavedInDb[0]._id.toString()).toBe(userCreated.id)
+        expect(usersSavedInDb).toBeTruthy()
+        expect(usersSavedInDb?._id.toString()).toBe(userCreated.id)
+        expect(usersSavedInDb?.cpf).toBe(addAccountParams.cpf)
+        expect(usersSavedInDb?.name).toBe(addAccountParams.name)
       })
     })
 
