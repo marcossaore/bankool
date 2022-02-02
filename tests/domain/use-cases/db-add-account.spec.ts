@@ -45,7 +45,16 @@ describe('SaveUserAccount UseCase', () => {
   it('Should call SaveAccountRepository with correct input', async () => {
     await sut.add(input)
 
-    expect(saveAccountRepository.saveAccount).toHaveBeenCalledWith(input)
+    expect(saveAccountRepository.saveAccount).toHaveBeenCalledWith({
+      name: 'any_name',
+      email: 'any_email',
+      birthDate: 'any_birthDate',
+      phone: 'any_phone',
+      password: 'hashed_password',
+      cpf: 'any_cpf',
+      rg: 'any_rg'
+    })
+
     expect(saveAccountRepository.saveAccount).toHaveBeenCalledTimes(1)
   })
 
