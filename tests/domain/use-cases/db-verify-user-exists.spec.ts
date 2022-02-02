@@ -41,4 +41,14 @@ describe('DbVerifyUserExists UseCase', () => {
 
     expect(exists).toBe(false)
   })
+
+  it('Should rethrow if VerifyUserExistsRepository throws', async () => {
+    verifyUserExistsRepository.exists.mockImplementationOnce(() => {
+      throw new Error()
+    })
+
+    const promise = sut.exists(input)
+
+    await expect(promise).rejects.toThrow()
+  })
 })
