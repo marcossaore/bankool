@@ -35,4 +35,10 @@ describe('DbVerifyUserExists UseCase', () => {
 
     expect(exists).toBe(true)
   })
+
+  it('Should return false if VerifyUserExistsRepo returns false', async () => {
+    const exists = await sut.exists(input)
+
+    expect(exists).toBe(false)
+  })
 })
