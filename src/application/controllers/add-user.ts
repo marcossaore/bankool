@@ -31,7 +31,6 @@ export class AddUser extends Controller {
 
   override buildValidators (request: AddUser.RequestInput): Validator[] {
     const builder = []
-
     const requiredFields = [
       'name',
       'email',
@@ -41,17 +40,13 @@ export class AddUser extends Controller {
       'cpf',
       'rg'
     ]
-
     for (const [key, value] of Object.entries(request)) {
       if (requiredFields.includes(key)) {
         builder.push(...Builder.of({ value: value, fieldName: key }).required().build())
       }
     }
-
     const { email, cpf } = request
-
     builder.push(...Builder.of({ value: email, fieldName: 'email' }).email().build())
-
     builder.push(...Builder.of({ value: cpf, fieldName: 'cpf' }).cpf().build())
     return builder
   }
