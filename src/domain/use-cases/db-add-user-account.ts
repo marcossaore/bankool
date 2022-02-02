@@ -1,5 +1,5 @@
 import { SaveUserAccountRepository } from '@/domain/contracts/repos'
-import { AddUserAccount } from '../contracts/gateways/user'
+import { AddUserAccount } from '@/domain/contracts/gateways/user'
 
 export class DbAddUserAccount implements AddUserAccount {
   constructor (
