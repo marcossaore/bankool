@@ -1,10 +1,10 @@
-import { VerifyUserExists } from '@/domain/contracts/gateways'
+import { VerifyAccountExists } from '@/domain/contracts/gateways'
 import { DbVerifyUserExists } from '@/domain/use-cases'
 import { VerifyUserExistsRepository } from '@/domain/contracts/repos'
 
 import { mock, MockProxy } from 'jest-mock-extended'
 
-let input: VerifyUserExists.Input
+let input: VerifyAccountExists.Input
 let verifyUserExistsRepository: MockProxy<VerifyUserExistsRepository>
 let sut: DbVerifyUserExists
 
@@ -23,7 +23,7 @@ beforeEach(() => {
 
 describe('DbVerifyUserExists UseCase', () => {
   it('Should call VerifyUserExistsRepo with correct input', async () => {
-    await sut.exists(input)
+    await sut.verify(input)
 
     expect(verifyUserExistsRepository.verifyUserExists).toHaveBeenCalledWith(input)
   })
@@ -31,13 +31,13 @@ describe('DbVerifyUserExists UseCase', () => {
   it('Should return true if VerifyUserExistsRepo returns true', async () => {
     verifyUserExistsRepository.verifyUserExists.mockResolvedValueOnce(true)
 
-    const exists = await sut.exists(input)
+    const exists = await sut.verify(input)
 
     expect(exists).toBe(true)
   })
 
   it('Should return false if VerifyUserExistsRepo returns false', async () => {
-    const exists = await sut.exists(input)
+    const exists = await sut.verify(input)
 
     expect(exists).toBe(false)
   })
@@ -47,7 +47,7 @@ describe('DbVerifyUserExists UseCase', () => {
       throw new Error()
     })
 
-    const promise = sut.exists(input)
+    const promise = sut.verify(input)
 
     await expect(promise).rejects.toThrow()
   })

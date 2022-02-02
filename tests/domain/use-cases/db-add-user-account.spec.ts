@@ -1,10 +1,10 @@
 import { mock, MockProxy } from 'jest-mock-extended'
 import { DbAddUserAccount } from '@/domain/use-cases'
-import { AddUserAccount } from '@/domain/contracts/gateways/user'
+import { AddAccount } from '@/domain/contracts/gateways/user'
 import { SaveUserAccountRepository } from '@/domain/contracts/repos'
 
-let userInput: AddUserAccount.Input
-let userOutput: AddUserAccount.Output
+let userInput: AddAccount.Input
+let userOutput: AddAccount.Output
 let saveUserAccountRepositorySpy: MockProxy<SaveUserAccountRepository>
 let sut: DbAddUserAccount
 

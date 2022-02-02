@@ -1,12 +1,12 @@
 import { Controller } from '@/application/controllers'
 import { ValidationBuilder as Builder, Validator } from '@/application/validation'
 import { AccessToken } from '@/domain/entities'
-import { TokenGenerator, AddUserAccount, VerifyUserExists } from '@/domain/contracts/gateways'
+import { TokenGenerator, AddAccount, VerifyAccountExists } from '@/domain/contracts/gateways'
 import { UserAccountAlreadyInUseError } from '@/application/errors'
 import { HttpResponse, ok, forbidden } from '@/application/helpers'
 export class AddUser extends Controller {
   constructor (
-    private readonly userAccount: AddUserAccount & VerifyUserExists,
+    private readonly userAccount: AddAccount & VerifyAccountExists,
     private readonly tokenGenerator: TokenGenerator
   ) {
     super()
@@ -14,7 +14,7 @@ export class AddUser extends Controller {
 
   async perform (request: AddUser.RequestInput): Promise<HttpResponse<AddUser.RequestOutput>> {
     const { cpf, name, email, birthDate } = request
-    const accountExists = await this.userAccount.exists({ cpf })
+    const accountExists = await this.userAccount.verify({ cpf })
     if (accountExists) {
       return forbidden(new UserAccountAlreadyInUseError())
     }

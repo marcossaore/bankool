@@ -1,6 +1,6 @@
 import { AddUser, Controller } from '@/application/controllers'
 import { RequiredString, Email, Cpf } from '@/application/validation'
-import { TokenGenerator, AddUserAccount, VerifyUserExists } from '@/domain/contracts/gateways'
+import { TokenGenerator, AddAccount, VerifyAccountExists } from '@/domain/contracts/gateways'
 import { AccessToken } from '@/domain/entities'
 import { ServerError, UserAccountAlreadyInUseError } from '@/application/errors'
 
@@ -29,7 +29,7 @@ describe('AddUser Controller', () => {
   let sut: AddUser
   let requestInput: AddUser.RequestInput
   let userModel: { id: string }
-  let userAccount: MockProxy<AddUserAccount> & MockProxy<VerifyUserExists>
+  let userAccount: MockProxy<AddAccount> & MockProxy<VerifyAccountExists>
   let tokenGenerator: MockProxy<TokenGenerator>
 
   beforeAll(() => {
@@ -49,7 +49,7 @@ describe('AddUser Controller', () => {
 
     userAccount = mock()
     userAccount.add.mockResolvedValue(userModel)
-    userAccount.exists.mockResolvedValue(false)
+    userAccount.verify.mockResolvedValue(false)
     tokenGenerator = mock()
     tokenGenerator.generate.mockResolvedValue('any_access_token')
   })
@@ -83,13 +83,13 @@ describe('AddUser Controller', () => {
     expect(userAccount.add).toBeCalledWith(requestInput)
   })
 
-  it('Should call VerifyUserExists with correct Input', async () => {
+  it('Should call VerifyAccountExists with correct Input', async () => {
     await sut.handle(requestInput)
-    expect(userAccount.exists).toBeCalledWith({ cpf: requestInput.cpf })
+    expect(userAccount.verify).toBeCalledWith({ cpf: requestInput.cpf })
   })
 
-  it('Should return 409 if VerifyUserExists returns true', async () => {
-    userAccount.exists.mockResolvedValueOnce(true)
+  it('Should return 409 if VerifyAccountExists returns true', async () => {
+    userAccount.verify.mockResolvedValueOnce(true)
     const httpResponse = await sut.handle(requestInput)
     expect(httpResponse).toEqual({
       statusCode: 403,
