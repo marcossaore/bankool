@@ -1,15 +1,17 @@
-import { mock, MockProxy } from 'jest-mock-extended'
 import { DbAddAccount } from '@/domain/use-cases'
-import { AddAccount } from '@/domain/contracts/gateways/user'
+import { AddAccount, Hasher } from '@/domain/contracts/gateways'
 import { SaveAccountRepository } from '@/domain/contracts/repos'
 
-let userInput: AddAccount.Input
-let userOutput: AddAccount.Output
+import { mock, MockProxy } from 'jest-mock-extended'
+
+let input: AddAccount.Input
+let output: AddAccount.Output
+let hasher: MockProxy<Hasher>
 let saveAccountRepository: MockProxy<SaveAccountRepository>
 let sut: DbAddAccount
 
 beforeAll(() => {
-  userInput = {
+  input = {
     name: 'any_name',
     email: 'any_email',
     birthDate: 'any_birthDate',
@@ -19,30 +21,38 @@ beforeAll(() => {
     rg: 'any_rg'
   }
 
-  userOutput = {
+  output = {
     id: 'any_id'
   }
 
   saveAccountRepository = mock()
-  saveAccountRepository.saveAccount.mockResolvedValue(userOutput)
+  saveAccountRepository.saveAccount.mockResolvedValue(output)
+
+  hasher = mock()
+  hasher.hash.mockResolvedValue('hashed_password')
 })
 
 beforeEach(() => {
-  sut = new DbAddAccount(saveAccountRepository)
+  sut = new DbAddAccount(hasher, saveAccountRepository)
 })
 
 describe('SaveUserAccount UseCase', () => {
-  it('Should call SaveAccountRepository with correct input', async () => {
-    await sut.add(userInput)
+  it('Should call Hasher with correct plaintext', async () => {
+    await sut.add(input)
+    expect(hasher.hash).toBeCalledWith(input.password)
+  })
 
-    expect(saveAccountRepository.saveAccount).toHaveBeenCalledWith(userInput)
+  it('Should call SaveAccountRepository with correct input', async () => {
+    await sut.add(input)
+
+    expect(saveAccountRepository.saveAccount).toHaveBeenCalledWith(input)
     expect(saveAccountRepository.saveAccount).toHaveBeenCalledTimes(1)
   })
 
   it('Should return an user account when succeds', async () => {
-    const user = await sut.add(userInput)
+    const user = await sut.add(input)
 
-    expect(user).toEqual(userOutput)
+    expect(user).toEqual(output)
   })
 
   it('Should rethrow if SaveAccountRepository throws', async () => {
@@ -50,7 +60,7 @@ describe('SaveUserAccount UseCase', () => {
       throw new Error()
     })
 
-    const promise = sut.add(userInput)
+    const promise = sut.add(input)
 
     await expect(promise).rejects.toThrow()
   })
