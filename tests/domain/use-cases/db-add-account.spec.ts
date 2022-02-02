@@ -37,7 +37,7 @@ beforeEach(() => {
 })
 
 describe('SaveUserAccount UseCase', () => {
-  it('Should call Hasher with correct plaintext', async () => {
+  it('Should call Hasher with correct input', async () => {
     await sut.add(input)
     expect(hasher.hash).toBeCalledWith(input.password)
   })
@@ -57,6 +57,16 @@ describe('SaveUserAccount UseCase', () => {
 
   it('Should rethrow if SaveAccountRepository throws', async () => {
     saveAccountRepository.saveAccount.mockImplementationOnce(() => {
+      throw new Error()
+    })
+
+    const promise = sut.add(input)
+
+    await expect(promise).rejects.toThrow()
+  })
+
+  it('Should rethrow if Hasher throws', async () => {
+    hasher.hash.mockImplementationOnce(() => {
       throw new Error()
     })
 
