@@ -19,6 +19,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "cpf-cnpj-validator": "^1.0.3",
     "jsonwebtoken": "^8.5.1",
     "module-alias": "^2.2.0",
@@ -28,6 +29,7 @@
   "devDependencies": {
     "@jest-mock/express": "1.4.5",
     "@shelf/jest-mongodb": "^2.2.0",
+    "@types/bcrypt": "^5.0.0",
     "@types/jest": "^27.0.1",
     "@types/jsonwebtoken": "^8.5.8",
     "@types/module-alias": "^2.0.1",
