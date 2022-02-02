@@ -10,7 +10,7 @@ export namespace SaveUserAccountRepository {
 }
 
 export interface VerifyUserExistsRepository {
-  verifyUserExists: (input: VerifyUserExistsRepository.Input) => Promise<VerifyUserExistsRepository.Output>
+  verifyUserExists: ({ cpf }: VerifyUserExistsRepository.Input) => Promise<VerifyUserExistsRepository.Output>
 }
 
 export namespace VerifyUserExistsRepository {

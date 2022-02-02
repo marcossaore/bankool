@@ -4,16 +4,12 @@ import { MongoHelper, AccountMongoRepository } from '@/infra/repos/mongodb'
 import { Collection } from 'mongodb'
 
 describe('', () => {
-  let usersAccountCollection: Collection
+  let accountCollection: Collection
   let sut: AccountMongoRepository
   let addAccountParams: SaveUserAccountRepository.Input
 
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL as string)
-  })
-
-  afterAll(async () => {
-    await MongoHelper.disconnect()
     addAccountParams = {
       cpf: '12345678901',
       name: 'Mario Guerra',
@@ -25,9 +21,13 @@ describe('', () => {
     }
   })
 
+  afterAll(async () => {
+    await MongoHelper.disconnect()
+  })
+
   beforeEach(async () => {
-    usersAccountCollection = MongoHelper.getCollection('account')
-    await usersAccountCollection.deleteMany({})
+    accountCollection = MongoHelper.getCollection('account')
+    await accountCollection.deleteMany({})
     sut = new AccountMongoRepository()
   })
 
@@ -35,7 +35,7 @@ describe('', () => {
     describe('saveUserAccount', () => {
       it('Should create an account on success', async () => {
         const userCreated = await sut.saveUserAccount(addAccountParams)
-        const usersSavedInDb = await usersAccountCollection.find().toArray()
+        const usersSavedInDb = await accountCollection.find().toArray()
 
         expect(usersSavedInDb.length).toBe(1)
         expect(usersSavedInDb[0]._id.toString()).toBe(userCreated.id)
@@ -47,6 +47,14 @@ describe('', () => {
         const exists = await sut.verifyUserExists({ cpf: 'any_cpf' })
 
         expect(exists).toBe(false)
+      })
+
+      it('Should return true if account exists', async () => {
+        await accountCollection.insertOne({ ...addAccountParams })
+
+        const exists = await sut.verifyUserExists({ cpf: '12345678901' })
+
+        expect(exists).toBe(true)
       })
     })
   })
