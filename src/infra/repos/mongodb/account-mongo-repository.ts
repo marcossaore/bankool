@@ -1,8 +1,8 @@
-import { SaveUserAccountRepository, VerifyUserExistsRepository } from '@/domain/contracts/repos'
+import { SaveAccountRepository, VerifyAccountExistsRepository } from '@/domain/contracts/repos'
 import { MongoHelper } from '@/infra/repos/mongodb'
 
-export class AccountMongoRepository implements SaveUserAccountRepository, VerifyUserExistsRepository {
-  async saveUserAccount (userAccount: SaveUserAccountRepository.Input): Promise<SaveUserAccountRepository.Output> {
+export class AccountMongoRepository implements SaveAccountRepository, VerifyAccountExistsRepository {
+  async saveAccount (userAccount: SaveAccountRepository.Input): Promise<SaveAccountRepository.Output> {
     const accountCollection = MongoHelper.getCollection('account')
     const result = await accountCollection.insertOne({ ...userAccount })
     return {
@@ -10,7 +10,7 @@ export class AccountMongoRepository implements SaveUserAccountRepository, Verify
     }
   }
 
-  async verifyUserExists ({ cpf }: VerifyUserExistsRepository.Input): Promise<VerifyUserExistsRepository.Output> {
+  async verifyAccountExists ({ cpf }: VerifyAccountExistsRepository.Input): Promise<VerifyAccountExistsRepository.Output> {
     const accountCollection = MongoHelper.getCollection('account')
     const exists = await accountCollection.findOne({ cpf })
     return !!exists

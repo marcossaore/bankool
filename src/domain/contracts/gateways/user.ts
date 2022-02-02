@@ -1,12 +1,12 @@
-import { UserAccountModel, UserAddAccountModel } from '@/domain/models'
+import { AccountModel, AddAccountModel } from '@/domain/models'
 
 export interface AddAccount {
   add: (input: AddAccount.Input) => Promise<AddAccount.Output>
 }
 
 export namespace AddAccount {
-  export type Input = UserAddAccountModel
-  export type Output = UserAccountModel
+  export type Input = AddAccountModel
+  export type Output = AccountModel
 }
 
 export interface VerifyAccountExists {

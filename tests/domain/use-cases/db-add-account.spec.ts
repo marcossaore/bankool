@@ -1,12 +1,12 @@
 import { mock, MockProxy } from 'jest-mock-extended'
-import { DbAddUserAccount } from '@/domain/use-cases'
+import { DbAddAccount } from '@/domain/use-cases'
 import { AddAccount } from '@/domain/contracts/gateways/user'
-import { SaveUserAccountRepository } from '@/domain/contracts/repos'
+import { SaveAccountRepository } from '@/domain/contracts/repos'
 
 let userInput: AddAccount.Input
 let userOutput: AddAccount.Output
-let saveUserAccountRepositorySpy: MockProxy<SaveUserAccountRepository>
-let sut: DbAddUserAccount
+let saveAccountRepository: MockProxy<SaveAccountRepository>
+let sut: DbAddAccount
 
 beforeAll(() => {
   userInput = {
@@ -23,20 +23,20 @@ beforeAll(() => {
     id: 'any_id'
   }
 
-  saveUserAccountRepositorySpy = mock()
-  saveUserAccountRepositorySpy.saveUserAccount.mockResolvedValue(userOutput)
+  saveAccountRepository = mock()
+  saveAccountRepository.saveAccount.mockResolvedValue(userOutput)
 })
 
 beforeEach(() => {
-  sut = new DbAddUserAccount(saveUserAccountRepositorySpy)
+  sut = new DbAddAccount(saveAccountRepository)
 })
 
 describe('SaveUserAccount UseCase', () => {
-  it('Should call SaveUserAccountRepository with correct input', async () => {
+  it('Should call SaveAccountRepository with correct input', async () => {
     await sut.add(userInput)
 
-    expect(saveUserAccountRepositorySpy.saveUserAccount).toHaveBeenCalledWith(userInput)
-    expect(saveUserAccountRepositorySpy.saveUserAccount).toHaveBeenCalledTimes(1)
+    expect(saveAccountRepository.saveAccount).toHaveBeenCalledWith(userInput)
+    expect(saveAccountRepository.saveAccount).toHaveBeenCalledTimes(1)
   })
 
   it('Should return an user account when succeds', async () => {
@@ -45,8 +45,8 @@ describe('SaveUserAccount UseCase', () => {
     expect(user).toEqual(userOutput)
   })
 
-  it('Should rethrow if SaveUserAccountRepository throws', async () => {
-    saveUserAccountRepositorySpy.saveUserAccount.mockImplementationOnce(() => {
+  it('Should rethrow if SaveAccountRepository throws', async () => {
+    saveAccountRepository.saveAccount.mockImplementationOnce(() => {
       throw new Error()
     })
 

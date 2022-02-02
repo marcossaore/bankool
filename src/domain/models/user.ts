@@ -1,4 +1,4 @@
-export type UserAddAccountModel = {
+export type AddAccountModel = {
   name: string
   email: string
   birthDate: string
@@ -8,6 +8,6 @@ export type UserAddAccountModel = {
   rg: string
 }
 
-export type UserAccountModel = {
+export type AccountModel = {
   id: string
 }

@@ -1,2 +1,2 @@
-export * from './db-add-user-account'
-export * from './db-verify-user-exists'
+export * from './db-add-account'
+export * from './db-verify-account-exists'

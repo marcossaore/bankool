@@ -1,4 +1,4 @@
-import { SaveUserAccountRepository } from '@/domain/contracts/repos'
+import { SaveAccountRepository } from '@/domain/contracts/repos'
 import { MongoHelper, AccountMongoRepository } from '@/infra/repos/mongodb'
 
 import { Collection } from 'mongodb'
@@ -6,7 +6,7 @@ import { Collection } from 'mongodb'
 describe('', () => {
   let accountCollection: Collection
   let sut: AccountMongoRepository
-  let addAccountParams: SaveUserAccountRepository.Input
+  let addAccountParams: SaveAccountRepository.Input
 
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL as string)
@@ -34,7 +34,7 @@ describe('', () => {
   describe('AccountMongoRepository', () => {
     describe('saveUserAccount', () => {
       it('Should create an account on success', async () => {
-        const userCreated = await sut.saveUserAccount(addAccountParams)
+        const userCreated = await sut.saveAccount(addAccountParams)
         const usersSavedInDb = await accountCollection.findOne()
 
         expect(usersSavedInDb).toBeTruthy()
@@ -44,9 +44,9 @@ describe('', () => {
       })
     })
 
-    describe('verifyUserExists', () => {
+    describe('VerifyAccountExistsRepo', () => {
       it('Should return false if account doesnt exist', async () => {
-        const exists = await sut.verifyUserExists({ cpf: 'any_cpf' })
+        const exists = await sut.verifyAccountExists({ cpf: 'any_cpf' })
 
         expect(exists).toBe(false)
       })
@@ -54,7 +54,7 @@ describe('', () => {
       it('Should return true if account exists', async () => {
         await accountCollection.insertOne({ ...addAccountParams })
 
-        const exists = await sut.verifyUserExists({ cpf: '12345678901' })
+        const exists = await sut.verifyAccountExists({ cpf: '12345678901' })
 
         expect(exists).toBe(true)
       })
