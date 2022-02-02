@@ -27,4 +27,12 @@ describe('DbVerifyUserExists UseCase', () => {
 
     expect(verifyUserExistsRepository.exists).toHaveBeenCalledWith(input)
   })
+
+  it('Should return true if VerifyUserExistsRepo returns true', async () => {
+    verifyUserExistsRepository.exists.mockResolvedValueOnce(true)
+
+    const exists = await sut.exists(input)
+
+    expect(exists).toBe(true)
+  })
 })
