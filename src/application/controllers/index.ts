@@ -1,2 +1,2 @@
 export * from './controller'
-export * from './add-user'
+export * from './add-account'

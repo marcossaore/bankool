@@ -4,7 +4,7 @@ import { AccessToken } from '@/domain/entities'
 import { TokenGenerator, AddAccount, VerifyAccountExists } from '@/domain/contracts/gateways'
 import { UserAccountAlreadyInUseError } from '@/application/errors'
 import { HttpResponse, ok, forbidden } from '@/application/helpers'
-export class AddUser extends Controller {
+export class AddAccountController extends Controller {
   constructor (
     private readonly userAccount: AddAccount & VerifyAccountExists,
     private readonly tokenGenerator: TokenGenerator
@@ -12,7 +12,7 @@ export class AddUser extends Controller {
     super()
   }
 
-  async perform (request: AddUser.RequestInput): Promise<HttpResponse<AddUser.RequestOutput>> {
+  async perform (request: AddAccountController.RequestInput): Promise<HttpResponse<AddAccountController.RequestOutput>> {
     const { cpf, name, email, birthDate } = request
     const accountExists = await this.userAccount.verify({ cpf })
     if (accountExists) {
@@ -29,7 +29,7 @@ export class AddUser extends Controller {
     })
   }
 
-  override buildValidators (request: AddUser.RequestInput): Validator[] {
+  override buildValidators (request: AddAccountController.RequestInput): Validator[] {
     const builder = []
     const requiredFields = [
       'name',
@@ -52,7 +52,7 @@ export class AddUser extends Controller {
   }
 }
 
-export namespace AddUser {
+export namespace AddAccountController {
   export type RequestInput = {
     name: string
     email: string

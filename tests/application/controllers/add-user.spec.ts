@@ -1,4 +1,4 @@
-import { AddUser, Controller } from '@/application/controllers'
+import { AddAccountController, Controller } from '@/application/controllers'
 import { RequiredString, Email, Cpf } from '@/application/validation'
 import { TokenGenerator, AddAccount, VerifyAccountExists } from '@/domain/contracts/gateways'
 import { AccessToken } from '@/domain/entities'
@@ -26,8 +26,8 @@ jest.mock('@/infra/gateways/cpf-validator-adapter', () => {
 })
 
 describe('AddUser Controller', () => {
-  let sut: AddUser
-  let requestInput: AddUser.RequestInput
+  let sut: AddAccountController
+  let requestInput: AddAccountController.RequestInput
   let userModel: { id: string }
   let userAccount: MockProxy<AddAccount> & MockProxy<VerifyAccountExists>
   let tokenGenerator: MockProxy<TokenGenerator>
@@ -55,7 +55,7 @@ describe('AddUser Controller', () => {
   })
 
   beforeEach(() => {
-    sut = new AddUser(userAccount, tokenGenerator)
+    sut = new AddAccountController(userAccount, tokenGenerator)
   })
 
   it('Should extend Controller', () => {
