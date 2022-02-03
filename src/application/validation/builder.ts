@@ -1,4 +1,4 @@
-import { Validator, AllowedMimeTypes, Extension, MaxFileSize, Required, RequiredBuffer, RequiredString, Email, DateValidation, Cpf } from '@/application/validation'
+import { Validator, AllowedMimeTypes, Extension, MaxFileSize, Required, RequiredBuffer, RequiredString, Email, DateValidation, Cpf, Compare } from '@/application/validation'
 import { CpfValidatorAdapter, EmailValidatorAdapter } from '@/infra/gateways'
 import { BuilderFieldNameRequiredError } from './builder-field-name-required-error'
 
@@ -58,6 +58,14 @@ export class ValidationBuilder {
       throw new BuilderFieldNameRequiredError('cpf')
     }
     this.validators.push(new Cpf(this.value, this.fieldName, new CpfValidatorAdapter()))
+    return this
+  }
+
+  compare (valueToCompare: number | string, fieldNameToCompare: string): ValidationBuilder {
+    if (!this?.fieldName) {
+      throw new BuilderFieldNameRequiredError('compare')
+    }
+    this.validators.push(new Compare(this.value, valueToCompare, this.fieldName, fieldNameToCompare))
     return this
   }
 

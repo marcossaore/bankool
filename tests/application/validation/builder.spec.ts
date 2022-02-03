@@ -1,4 +1,4 @@
-import { AllowedMimeTypes, MaxFileSize, Required, RequiredBuffer, RequiredString, ValidationBuilder, Email, DateValidation, Cpf } from '@/application/validation'
+import { AllowedMimeTypes, MaxFileSize, Required, RequiredBuffer, RequiredString, ValidationBuilder, Email, DateValidation, Cpf, Compare } from '@/application/validation'
 import { CpfValidatorAdapter, EmailValidatorAdapter } from '@/infra/gateways'
 import { BuilderFieldNameRequiredError } from '@/application/validation/builder-field-name-required-error'
 
@@ -113,6 +113,18 @@ describe('ValidationBuilder', () => {
 
     expect(validators).toEqual([
       new Cpf(params.value, params.fieldName, new CpfValidatorAdapter())
+    ])
+  })
+
+  it('should return Compare Validation ', () => {
+    const params = { value: 'any_value', fieldName: 'value' }
+    const validators = ValidationBuilder
+      .of(params)
+      .compare('valueToCompare', 'fieldNameToCompare')
+      .build()
+
+    expect(validators).toEqual([
+      new Compare(params.value, 'valueToCompare', params.fieldName, 'fieldNameToCompare')
     ])
   })
 
