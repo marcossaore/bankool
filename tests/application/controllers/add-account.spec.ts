@@ -2,7 +2,7 @@ import { AddAccountController, Controller } from '@/application/controllers'
 import { RequiredString, Email, Cpf, Compare } from '@/application/validation'
 import { TokenGenerator, AddAccount, VerifyAccountExists } from '@/domain/contracts/gateways'
 import { AccessToken } from '@/domain/entities'
-import { ServerError, UserAccountAlreadyInUseError } from '@/application/errors'
+import { ServerError, UserAccountAlreadyInUseError, RequiredFieldError, CompareFieldError } from '@/application/errors'
 
 import { MockProxy, mock } from 'jest-mock-extended'
 
@@ -79,6 +79,30 @@ describe('AddUser Controller', () => {
     expect(validators[8]).toEqual(new Compare('any_password', 'any_password', 'password', 'confirmPassword'))
     expect(validators[9]).toBeInstanceOf(Email)
     expect(validators[10]).toBeInstanceOf(Cpf)
+  })
+
+  it('should return 400 if name is not provided', async () => {
+    const requestInputAlter = { ...requestInput }
+    requestInputAlter.name = undefined as any
+
+    const httpResponse = await sut.handle(requestInputAlter)
+
+    expect(httpResponse).toEqual({
+      data: new RequiredFieldError('name'),
+      statusCode: 400
+    })
+  })
+
+  it('should return 400 if passwordConfirm is not equal password', async () => {
+    const requestInputAlter = { ...requestInput }
+    requestInputAlter.confirmPassword = 'other_password'
+
+    const httpResponse = await sut.handle(requestInputAlter)
+
+    expect(httpResponse).toEqual({
+      data: new CompareFieldError('password', 'confirmPassword'),
+      statusCode: 400
+    })
   })
 
   it('Should call SaveUserAccount with correct Input', async () => {

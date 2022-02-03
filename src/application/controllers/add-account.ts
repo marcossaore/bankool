@@ -41,10 +41,9 @@ export class AddAccountController extends Controller {
       'cpf',
       'rg'
     ]
-    for (const [key, value] of Object.entries(request)) {
-      if (requiredFields.includes(key)) {
-        builder.push(...Builder.of({ value: value, fieldName: key }).required().build())
-      }
+    for (const requiredField of requiredFields) {
+      const value = request as any
+      builder.push(...Builder.of({ value: value[requiredField] ?? null, fieldName: requiredField }).required().build())
     }
     const { email, cpf, password, confirmPassword } = request
     builder.push(...Builder.of({ value: password, fieldName: 'password' }).compare(confirmPassword, 'confirmPassword').build())
