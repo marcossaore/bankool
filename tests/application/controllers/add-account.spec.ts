@@ -1,5 +1,5 @@
 import { AddAccountController, Controller } from '@/application/controllers'
-import { RequiredString, Email, Cpf } from '@/application/validation'
+import { RequiredString, Email, Cpf, Compare } from '@/application/validation'
 import { TokenGenerator, AddAccount, VerifyAccountExists } from '@/domain/contracts/gateways'
 import { AccessToken } from '@/domain/entities'
 import { ServerError, UserAccountAlreadyInUseError } from '@/application/errors'
@@ -39,6 +39,7 @@ describe('AddUser Controller', () => {
       birthDate: 'any_birthday',
       phone: 'any_phone',
       password: 'any_password',
+      confirmPassword: 'any_password',
       cpf: 'any_cpf',
       rg: 'any_rg'
     }
@@ -72,10 +73,12 @@ describe('AddUser Controller', () => {
     expect(validators[2]).toEqual(new RequiredString('any_birthday', 'birthDate'))
     expect(validators[3]).toEqual(new RequiredString('any_phone', 'phone'))
     expect(validators[4]).toEqual(new RequiredString('any_password', 'password'))
-    expect(validators[5]).toEqual(new RequiredString('any_cpf', 'cpf'))
-    expect(validators[6]).toEqual(new RequiredString('any_rg', 'rg'))
-    expect(validators[7]).toBeInstanceOf(Email)
-    expect(validators[8]).toBeInstanceOf(Cpf)
+    expect(validators[5]).toEqual(new RequiredString('any_password', 'confirmPassword'))
+    expect(validators[6]).toEqual(new RequiredString('any_cpf', 'cpf'))
+    expect(validators[7]).toEqual(new RequiredString('any_rg', 'rg'))
+    expect(validators[8]).toEqual(new Compare('any_password', 'any_password', 'password', 'confirmPassword'))
+    expect(validators[9]).toBeInstanceOf(Email)
+    expect(validators[10]).toBeInstanceOf(Cpf)
   })
 
   it('Should call SaveUserAccount with correct Input', async () => {

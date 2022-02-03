@@ -37,6 +37,7 @@ export class AddAccountController extends Controller {
       'birthDate',
       'phone',
       'password',
+      'confirmPassword',
       'cpf',
       'rg'
     ]
@@ -45,7 +46,8 @@ export class AddAccountController extends Controller {
         builder.push(...Builder.of({ value: value, fieldName: key }).required().build())
       }
     }
-    const { email, cpf } = request
+    const { email, cpf, password, confirmPassword } = request
+    builder.push(...Builder.of({ value: password, fieldName: 'password' }).compare(confirmPassword, 'confirmPassword').build())
     builder.push(...Builder.of({ value: email, fieldName: 'email' }).email().build())
     builder.push(...Builder.of({ value: cpf, fieldName: 'cpf' }).cpf().build())
     return builder
@@ -59,6 +61,7 @@ export namespace AddAccountController {
     birthDate: string
     phone: string
     password: string
+    confirmPassword: string
     cpf: string
     rg: string
   }

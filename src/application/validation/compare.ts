@@ -3,8 +3,8 @@ import { Validator } from '@/application/validation'
 
 export class Compare implements Validator {
   constructor (
-    readonly value: any,
-    readonly compareTo: any,
+    readonly value: string | number | null,
+    readonly compareTo: string | number | null,
     readonly fieldName: string,
     readonly compareFieldName: string
   ) {}

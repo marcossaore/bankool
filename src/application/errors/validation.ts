@@ -23,30 +23,37 @@ export class MaxFileSizeError extends Error {
 }
 
 export class RegexParamError extends Error {
-  constructor (paramName: string, format: string) {
-    super(`${paramName} must contains the format: ${format}`)
+  constructor (fieldName: string, format: string) {
+    super(`${fieldName} must contains the format: ${format}`)
     this.name = 'RegexParamError'
   }
 }
 
 export class InvalidParamError extends Error {
-  constructor (paramName: string) {
-    super(`Invalid param: ${paramName}`)
+  constructor (fieldName: string) {
+    super(`Invalid param: ${fieldName}`)
     this.name = 'InvalidParamError'
   }
 }
 
 export class InvalidEmailParamError extends InvalidParamError {
-  constructor (paramName: string) {
-    super(`Invalid param: ${paramName} is not a valid email`)
+  constructor (fieldName: string) {
+    super(`Invalid param: ${fieldName} is not a valid email`)
     this.name = 'InvalidEmailParamError'
   }
 }
 
 export class InvalidCpfParamError extends InvalidParamError {
-  constructor (paramName: string) {
-    super(`Invalid param: ${paramName} is not a valid cpf`)
+  constructor (fieldName: string) {
+    super(`Invalid param: ${fieldName} is not a valid cpf`)
     this.name = 'InvalidCpfParamError'
+  }
+}
+
+export class CompareFieldError extends Error {
+  constructor (fieldName: string, compareFieldName: string) {
+    super(`The field ${fieldName} must be equal to ${compareFieldName}`)
+    this.name = 'CompareFieldError'
   }
 }
 
