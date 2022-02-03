@@ -2,7 +2,7 @@ import { AddAccountController, Controller } from '@/application/controllers'
 import { RequiredString, Email, Cpf, Compare, DateValidation } from '@/application/validation'
 import { TokenGenerator, AddAccount, VerifyAccountExists } from '@/domain/contracts/gateways'
 import { AccessToken } from '@/domain/entities'
-import { ServerError, UserAccountAlreadyInUseError, RequiredFieldError, CompareFieldError, InvalidDateError } from '@/application/errors'
+import { ServerError, AccountAlreadyInUseError, RequiredFieldError, CompareFieldError, InvalidDateError } from '@/application/errors'
 
 import { MockProxy, mock } from 'jest-mock-extended'
 
@@ -133,7 +133,7 @@ describe('AddUser Controller', () => {
     const httpResponse = await sut.handle(requestInput)
     expect(httpResponse).toEqual({
       statusCode: 403,
-      data: new UserAccountAlreadyInUseError()
+      data: new AccountAlreadyInUseError()
     })
   })
 

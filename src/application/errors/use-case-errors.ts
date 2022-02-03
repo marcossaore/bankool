@@ -1,6 +1,6 @@
-export class UserAccountAlreadyInUseError extends Error {
+export class AccountAlreadyInUseError extends Error {
   constructor () {
     super('The received cpf is already in use')
-    this.name = 'UserAccountAlreadyInUseError'
+    this.name = 'AccountAlreadyInUseError'
   }
 }

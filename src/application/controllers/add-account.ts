@@ -2,7 +2,7 @@ import { Controller } from '@/application/controllers'
 import { ValidationBuilder as Builder, Validator } from '@/application/validation'
 import { AccessToken } from '@/domain/entities'
 import { TokenGenerator, AddAccount, VerifyAccountExists } from '@/domain/contracts/gateways'
-import { UserAccountAlreadyInUseError } from '@/application/errors'
+import { AccountAlreadyInUseError } from '@/application/errors'
 import { HttpResponse, ok, forbidden } from '@/application/helpers'
 export class AddAccountController extends Controller {
   constructor (
@@ -16,7 +16,7 @@ export class AddAccountController extends Controller {
     const { cpf, name, email, birthDate } = request
     const accountExists = await this.userAccount.verify({ cpf })
     if (accountExists) {
-      return forbidden(new UserAccountAlreadyInUseError())
+      return forbidden(new AccountAlreadyInUseError())
     }
     const { id } = await this.userAccount.add(request)
     const accessToken = await this.tokenGenerator.generate({ key: id, expirationInMs: AccessToken.expirationInMs })

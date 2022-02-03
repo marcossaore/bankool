@@ -1,5 +1,5 @@
 import { SaveAccountRepository } from '@/domain/contracts/repos'
-import { AddAccount } from '@/domain/contracts/gateways/user'
+import { AddAccount } from '@/domain/contracts/gateways/account'
 import { Hasher } from '@/domain/contracts/gateways'
 
 export class DbAddAccount implements AddAccount {

@@ -1,3 +1,3 @@
 export * from './token'
-export * from './user'
+export * from './account'
 export * from './hasher'
