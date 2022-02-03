@@ -1,4 +1,4 @@
-import { AllowedMimeTypes, MaxFileSize, Required, RequiredBuffer, RequiredString, ValidationBuilder, Email, DateValidation, Cpf, Compare } from '@/application/validation'
+import { AllowedMimeTypes, MaxFileSize, Required, RequiredBuffer, RequiredString, ValidationBuilder, Email, DateValidation, Cpf, Compare, Phone } from '@/application/validation'
 import { CpfValidatorAdapter, EmailValidatorAdapter } from '@/infra/gateways'
 import { BuilderFieldNameRequiredError } from '@/application/validation/builder-field-name-required-error'
 
@@ -127,6 +127,18 @@ describe('ValidationBuilder', () => {
     ])
   })
 
+  it('should return Phone Validation ', () => {
+    const params = { value: 'any_value', fieldName: 'value' }
+    const validators = ValidationBuilder
+      .of(params)
+      .phone()
+      .build()
+
+    expect(validators).toEqual([
+      new Phone(params.value, params.fieldName)
+    ])
+  })
+
   it('should return Compare Validation ', () => {
     const params = { value: 'any_value', fieldName: 'value' }
     const validators = ValidationBuilder
@@ -177,5 +189,11 @@ describe('ValidationBuilder', () => {
     const builder = ValidationBuilder.of({ value: 'any_date' })
 
     expect(builder.compare).toThrowError(new BuilderFieldNameRequiredError('compare'))
+  })
+
+  it('should throw if fieldName is no provided when call phone method', () => {
+    const builder = ValidationBuilder.of({ value: 'any_date' })
+
+    expect(builder.phone).toThrowError(new BuilderFieldNameRequiredError('phone'))
   })
 })
