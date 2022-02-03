@@ -35,14 +35,16 @@ describe('User Routes', () => {
 
     const password = faker.internet.password()
     const randomDate = faker.date.past()
-    const birthDate = `${randomDate.getDate()}/${randomDate.getMonth() + 1}/${randomDate.getFullYear()}`
+    const month = (randomDate.getMonth() + 1) >= 10 ? randomDate.getMonth() + 1 : `0${randomDate.getMonth() + 1}`
+    const day = randomDate.getDate() >= 10 ? randomDate.getDate() : `0${randomDate.getDate()}`
+    const birthDate = `${randomDate.getFullYear()}-${month}-${day}`
 
     requestInput = {
       name: `${faker.name.firstName()} ${faker.name.lastName()}`,
       email: faker.internet.email().toString(),
       password,
       confirmPassword: password,
-      phone: faker.phone.phoneNumber().toString(),
+      phone: '988888888',
       birthDate,
       rg: '123456789',
       cpf: cpf.generate().toString()
