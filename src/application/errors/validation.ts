@@ -50,8 +50,14 @@ export class CompareFieldError extends Error {
   }
 }
 export class InvalidDateError extends Error {
-  constructor (paramName: string) {
-    super(`Invalid param: ${paramName}, format date must be: YYYY-mm-dd (hh:mm) optional`)
+  constructor (fieldName: string) {
+    super(`Invalid param: ${fieldName}, format date must be: YYYY-mm-dd (hh:mm) optional`)
     this.name = 'InvalidDateError'
+  }
+}
+export class InvalidPhoneError extends Error {
+  constructor (fieldName: string) {
+    super(`Invalid param: ${fieldName}, phone must contains 9 digits`)
+    this.name = 'InvalidPhoneError'
   }
 }
