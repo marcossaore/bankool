@@ -45,8 +45,9 @@ export class AddAccountController extends Controller {
       const value = request as any
       builder.push(...Builder.of({ value: value[requiredField] ?? null, fieldName: requiredField }).required().build())
     }
-    const { email, cpf, password, confirmPassword } = request
+    const { email, cpf, password, confirmPassword, birthDate } = request
     builder.push(...Builder.of({ value: password, fieldName: 'password' }).compare(confirmPassword, 'confirmPassword').build())
+    builder.push(...Builder.of({ value: birthDate, fieldName: 'birthDate' }).date().build())
     builder.push(...Builder.of({ value: email, fieldName: 'email' }).email().build())
     builder.push(...Builder.of({ value: cpf, fieldName: 'cpf' }).cpf().build())
     return builder
