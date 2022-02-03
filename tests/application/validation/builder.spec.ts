@@ -46,6 +46,17 @@ describe('ValidationBuilder', () => {
     ])
   })
 
+  it('should return Required when value is undefind', () => {
+    const validators = ValidationBuilder
+      .of({ value: undefined as any })
+      .required()
+      .build()
+
+    expect(validators).toEqual([
+      new Required(undefined)
+    ])
+  })
+
   it('should return correct image validators', () => {
     const buffer = Buffer.from('any_buffer')
 
