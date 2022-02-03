@@ -1,0 +1,10 @@
+version: '3'
+services:
+  database:
+    image: 'mongo:4.2'
+    environment:
+      - MONGO_INITDB_DATABASE=bankool-api
+    volumes:
+      - ./database:/data/db
+    ports:
+      - '27017:27017'
