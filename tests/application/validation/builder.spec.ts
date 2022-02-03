@@ -172,4 +172,10 @@ describe('ValidationBuilder', () => {
 
     expect(builder.cpf).toThrowError(new BuilderFieldNameRequiredError('cpf'))
   })
+
+  it('should throw if fieldName is no provided when call compare method', () => {
+    const builder = ValidationBuilder.of({ value: 'any_date' })
+
+    expect(builder.compare).toThrowError(new BuilderFieldNameRequiredError('compare'))
+  })
 })
