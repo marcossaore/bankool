@@ -1,8 +1,8 @@
 import { AddAccountController, Controller } from '@/application/controllers'
-import { RequiredString, Email, Cpf, Compare, DateValidation } from '@/application/validation'
+import { RequiredString, Email, Cpf, Compare, DateValidation, Phone } from '@/application/validation'
 import { TokenGenerator, AddAccount, VerifyAccountExists } from '@/domain/contracts/gateways'
 import { AccessToken } from '@/domain/entities'
-import { ServerError, AccountAlreadyInUseError, RequiredFieldError, CompareFieldError, InvalidDateError } from '@/application/errors'
+import { ServerError, AccountAlreadyInUseError, RequiredFieldError, CompareFieldError, InvalidDateError, InvalidPhoneError } from '@/application/errors'
 
 import { MockProxy, mock } from 'jest-mock-extended'
 
@@ -37,7 +37,7 @@ describe('AddUser Controller', () => {
       name: 'any_name',
       email: 'any_email',
       birthDate: '1984-11-06',
-      phone: 'any_phone',
+      phone: '123456789',
       password: 'any_password',
       confirmPassword: 'any_password',
       cpf: 'any_cpf',
@@ -71,15 +71,16 @@ describe('AddUser Controller', () => {
     expect(validators[0]).toEqual(new RequiredString('any_name', 'name'))
     expect(validators[1]).toEqual(new RequiredString('any_email', 'email'))
     expect(validators[2]).toEqual(new RequiredString('1984-11-06', 'birthDate'))
-    expect(validators[3]).toEqual(new RequiredString('any_phone', 'phone'))
+    expect(validators[3]).toEqual(new RequiredString('123456789', 'phone'))
     expect(validators[4]).toEqual(new RequiredString('any_password', 'password'))
     expect(validators[5]).toEqual(new RequiredString('any_password', 'confirmPassword'))
     expect(validators[6]).toEqual(new RequiredString('any_cpf', 'cpf'))
     expect(validators[7]).toEqual(new RequiredString('any_rg', 'rg'))
     expect(validators[8]).toEqual(new Compare('any_password', 'any_password', 'password', 'confirmPassword'))
     expect(validators[9]).toEqual(new DateValidation('1984-11-06', 'birthDate'))
-    expect(validators[10]).toBeInstanceOf(Email)
-    expect(validators[11]).toBeInstanceOf(Cpf)
+    expect(validators[10]).toEqual(new Phone('123456789', 'phone'))
+    expect(validators[11]).toBeInstanceOf(Email)
+    expect(validators[12]).toBeInstanceOf(Cpf)
   })
 
   it('should return 400 if name is not provided', async () => {
@@ -114,6 +115,18 @@ describe('AddUser Controller', () => {
 
     expect(httpResponse).toEqual({
       data: new CompareFieldError('password', 'confirmPassword'),
+      statusCode: 400
+    })
+  })
+
+  it('should return 400 if phone is invalid', async () => {
+    const requestInputAlter = { ...requestInput }
+    requestInputAlter.phone = 'invalid'
+
+    const httpResponse = await sut.handle(requestInputAlter)
+
+    expect(httpResponse).toEqual({
+      data: new InvalidPhoneError('phone'),
       statusCode: 400
     })
   })
