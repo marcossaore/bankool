@@ -7,7 +7,7 @@
   "author": "Marcos Soares",
   "private": true,
   "scripts": {
-    "start:local": "yarn clean && node -r dotenv/config dist/main",
+    "start": "yarn clean && node -r dotenv/config dist/main",
     "start:container": "yarn clean && yarn up",
     "start:dev": "yarn up:database && ts-node-dev --respawn --transpile-only --clear -r dotenv/config --inspect=0.0.0.0:9229 src/main",
     "debug:container": "npm install -g nodemon@2.0.15 && nodemon -L --watch ./dist --inspect=0.0.0.0:9222 --nolazy ./dist/main/index.js",
