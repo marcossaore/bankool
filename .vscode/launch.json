@@ -8,7 +8,15 @@
       "skipFiles": [
         "<node_internals>/**"
       ],
-      "type": "pwa-node"
+      "type": "node"
+    },
+    {
+      "name": "Attach Remote",
+      "port": 9222,
+      "request": "attach",
+      "remoteRoot": "/usr/src/bankool-api",
+      "type": "node",
+      "restart": true
     }
   ]
 }

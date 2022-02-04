@@ -8,3 +8,28 @@ services:
       - ./database:/data/db
     ports:
       - '27017:27017'
+    healthcheck:
+      test: echo 'db.runCommand({serverStatus:1}).ok' | mongo admin --quiet | grep 1
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+  api:
+    image: node:16.13
+    working_dir: /usr/src/bankool-api
+    restart: always
+    command: bash -c "yarn install --production=true && yarn debug:container"
+    environment:
+      - MONGO_URL=mongodb://database:27017/bankool-api
+      - PORT=80
+    volumes:
+      - ./dist/:/usr/src/bankool-api/dist/
+      - ./package.json:/usr/src/bankool-api/package.json
+    ports:
+      - "80:80"
+      - "9222:9222"
+    depends_on:
+      database:
+        condition: service_healthy
+    links:
+      - database
