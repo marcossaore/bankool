@@ -25,7 +25,6 @@
     "test:coverage": "yarn test --coverage --config ./jest.all.config.js",
     "test:all": "yarn test --config ./jest.all.config.js",
     "test:integration": "yarn test --config ./jest.integration.config.js",
-    "test:coveralls": "yarn test:coverage && coveralls < coverage/lcov.info",
     "prepare": "husky install"
   },
   "dependencies": {

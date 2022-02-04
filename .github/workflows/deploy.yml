@@ -22,7 +22,7 @@ jobs:
         run: yarn
 
       - name: Running tests
-        run: yarn test:coveralls
+        run: yarn test:coverage
 
       - name: Generate Coveralls
         uses: coverallsapp/github-action@master
