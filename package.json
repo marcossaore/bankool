@@ -22,7 +22,8 @@
     "test": "yarn jest --passWithNoTests --no-cache --runInBand",
     "test:watch": "yarn test --watch",
     "test:staged": "yarn test --findRelatedTests",
-    "test:coverage": "yarn test --coverage",
+    "test:coverage": "yarn test --coverage --config ./jest.all.config.js",
+    "test:all": "yarn test --config ./jest.all.config.js",
     "test:integration": "yarn test --config ./jest.integration.config.js",
     "test:coveralls": "yarn test:coverage && coveralls < coverage/lcov.info",
     "prepare": "husky install"
